@@ -74,20 +74,20 @@ static void Blink_LED(void)
 {
 
 	uint8_t _state = Get_Sum();
-	const uint16_t freq_arr[9] = {0, 0, BLINK_1, BLINK_2, BLINK_10, BLINK_20, BLINK_50, BLINK_100, BLINK_1000};
+	const uint16_t freq_arr[9] = {BLINK_1000, BLINK_100, BLINK_50, BLINK_20, BLINK_10, BLINK_2, BLINK_1, 0, 0};
 
 	switch (_state){
-	case 1:
+	case 8:
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
 		break;
-	case 0:
+	case 7:
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
 		break;
 	default:
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
-		HAL_Delay(freq_arr[_state]);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
-		HAL_Delay(freq_arr[_state]);
+		HAL_Delay(freq_arr[GPIO_PIN_COUNT - _state]);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
+		HAL_Delay(freq_arr[GPIO_PIN_COUNT - _state]);
 	}
 }
 /* USER CODE END 0 */
