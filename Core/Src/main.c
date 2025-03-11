@@ -64,10 +64,10 @@ static void MX_USART1_UART_Init(void);
 
 static int Get_Sum(void)
 {
-	return HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) + HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) +
+	return (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) + HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) +
 			HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) + HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) +
 			HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) + HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) +
-			HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_6) + HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_7);
+			HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_6) + HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_7));
 }
 
 static void Blink_LED(void)
@@ -78,15 +78,15 @@ static void Blink_LED(void)
 
 	switch (_state){
 	case 1:
-		HAL_GPIO_WritePin(GPIOB, GPIO_Pin_11, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
 		break;
 	case 0:
-		HAL_GPIO_WritePin(GPIOB, GPIO_Pin_11, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
 		break;
 	default:
-		HAL_GPIO_WritePin(GPIOB, GPIO_Pin_11, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
 		HAL_Delay(freq_arr[_state]);
-		HAL_GPIO_WritePin(GPIOB, GPIO_Pin_11, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
 		HAL_Delay(freq_arr[_state]);
 	}
 }
