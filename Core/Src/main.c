@@ -122,37 +122,33 @@ static void Transmit_answer(char *buff)
     return;
   }
 
-  if (strncmp(buff, "help", size)) {
-    HAL_UART_Transmit(&huart1, (uint8_t *)"led <on/off>\n", strlen("led <on/off>n"), 1000);
-    HAL_UART_Transmit(&huart1, (uint8_t *)"led mode <get/set/reset>\n", strlen("led mode <get/set/reset>\n"), 1000);
-  } else if(strncmp(buff, "led on", size)){
+  if (strcmp(buff, "help")) {
+    HAL_UART_Transmit(&huart1, (uint8_t *)"led <on/off>\r\n", strlen("led <on/off>\r\n"), 1000);
+    HAL_UART_Transmit(&huart1, (uint8_t *)"led mode <get/set/reset>\r\n", strlen("led mode <get/set/reset>\r\n"), 1000);
+  } else if(strcmp(buff, "led on")){
     HAL_UART_Transmit(&huart1, (uint8_t *)"led mode <get/set/reset>", strlen("led mode <get/set/reset>"), 1000);
-  } else if(strncmp(buff, "led off", size)){
+  } else if(strcmp(buff, "led off")){
     HAL_UART_Transmit(&huart1, (uint8_t *)"led mode <get/set/reset>", strlen("led mode <get/set/reset>"), 1000);
   } else {
     HAL_UART_Transmit(&huart1, (uint8_t *)"command not found\n", strlen("command not found\n"), 1000);
   }
-  // } else if(strncmp(buff, "led mode get ", size)){
-  //   HAL_UART_Transmit(&huart1, "led mode <get/set/reset>", strlen("led mode <get/set/reset>"), 1000);
-  // } 
   
 }
 
 static void Echo_UART(void)
 {
-  uint8_t buff[1024] = {0};
-  uint16_t iter = 0;
+  static uint8_t buff[1024] = {0};
+  static uint16_t iter = 0;
 
-  while (1)
-  {
-    if (HAL_UART_Receive(&huart1, &buff[iter], 1, 1000) == HAL_OK){
+
+  if (HAL_UART_Receive(&huart1, &buff[iter], 1, 1000) == HAL_OK){
+    HAL_UART_Transmit(&huart1, &buff[iter], 1, 1000);
+    if (buff[iter++] == 13){
+      buff[iter] = 10;
       HAL_UART_Transmit(&huart1, &buff[iter++], 1, 1000);
-      if (buff[iter] == 13){
-        buff[iter] = 10;
-        HAL_UART_Transmit(&huart1, &buff[iter++], 1, 1000);
-        Transmit_answer((char *)buff);
-      }
-      break;
+      Transmit_answer((char *)buff);
+      memset(buff, 0, 1024);
+      iter = 0;
     }
   }
 }
