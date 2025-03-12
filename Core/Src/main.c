@@ -62,21 +62,44 @@ static void MX_USART1_UART_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-static int Get_Sum(void)
+//static int Get_Sum(void)
+//{
+//	uint8_t sum= 0;
+//
+//
+//	return (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) + HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) +
+//			HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) + HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) +
+//			HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) + HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) +
+//			HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_6) + HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_7));
+//}
+
+static uint8_t Get_Sum_Bitwise(void)
 {
-	return (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) + HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) +
-			HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) + HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) +
-			HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) + HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) +
-			HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_6) + HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_7));
+	uint8_t sum= 0;
+
+	sum |= HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);
+	sum |= (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) << 1);
+	sum |= (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) << 2);
+	sum |= (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) << 3);
+	sum |= (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) << 4);
+	sum |= (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) << 5);
+	sum |= (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_6) << 6);
+	sum |= (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_7) << 7);
+
+	return (sum);
 }
+
 
 static void Blink_LED(void)
 {
 
-	uint8_t _state = Get_Sum();
-	const uint16_t freq_arr[9] = {BLINK_1000, BLINK_100, BLINK_50, BLINK_20, BLINK_10, BLINK_2, BLINK_1, 0, 0};
+	uint8_t state = Get_Sum_Bitwise();
 
-	switch (_state){
+	if (state > GPIO_PIN_COUNT) return ;
+
+	const uint16_t freq_arr[GPIO_PIN_COUNT + 1] = {BLINK_1000, BLINK_100, BLINK_50, BLINK_20, BLINK_10, BLINK_2, BLINK_1, 0, 0};
+
+	switch (state){
 	case 8:
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
 		break;
@@ -85,9 +108,9 @@ static void Blink_LED(void)
 		break;
 	default:
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
-		HAL_Delay(freq_arr[GPIO_PIN_COUNT - _state]);
+		HAL_Delay(freq_arr[GPIO_PIN_COUNT - state]);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
-		HAL_Delay(freq_arr[GPIO_PIN_COUNT - _state]);
+		HAL_Delay(freq_arr[GPIO_PIN_COUNT - state]);
 	}
 }
 /* USER CODE END 0 */
