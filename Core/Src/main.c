@@ -118,14 +118,18 @@ static void Echo_UART(void)
 {
   uint8_t data = 0;
 
-
-  if (HAL_UART_Receive(&huart1, &data, 1, 1000) == HAL_OK){
-    HAL_UART_Transmit(&huart1, &data, 1, 1000);
-  } else {
-    Echo_UART();
+  while (1)
+  {
+    if (HAL_UART_Receive(&huart1, &data, 1, 1000) == HAL_OK){
+      HAL_UART_Transmit(&huart1, &data, 1, 1000);
+      if (data == 13){
+        data = 10;
+        HAL_UART_Transmit(&huart1, &data, 1, 1000);
+      }
+      break;
+    }
   }
 }
-
 /* USER CODE END 0 */
 
 /**
