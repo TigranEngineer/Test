@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -114,17 +114,43 @@ static void Blink_LED(void)
 	}
 }
 
+static void Transmit_answer(char *buff)
+{
+  uint16_t size = strlen(buff) - 2;
+
+  if (size <= 0){
+    return;
+  }
+
+  if (strncmp(buff, "help", size)) {
+    HAL_UART_Transmit(&huart1, (uint8_t *)"led <on/off>\n", strlen("led <on/off>n"), 1000);
+    HAL_UART_Transmit(&huart1, (uint8_t *)"led mode <get/set/reset>\n", strlen("led mode <get/set/reset>\n"), 1000);
+  } else if(strncmp(buff, "led on", size)){
+    HAL_UART_Transmit(&huart1, (uint8_t *)"led mode <get/set/reset>", strlen("led mode <get/set/reset>"), 1000);
+  } else if(strncmp(buff, "led off", size)){
+    HAL_UART_Transmit(&huart1, (uint8_t *)"led mode <get/set/reset>", strlen("led mode <get/set/reset>"), 1000);
+  } else {
+    HAL_UART_Transmit(&huart1, (uint8_t *)"command not found\n", strlen("command not found\n"), 1000);
+  }
+  // } else if(strncmp(buff, "led mode get ", size)){
+  //   HAL_UART_Transmit(&huart1, "led mode <get/set/reset>", strlen("led mode <get/set/reset>"), 1000);
+  // } 
+  
+}
+
 static void Echo_UART(void)
 {
-  uint8_t data = 0;
+  uint8_t buff[1024] = {0};
+  uint16_t iter = 0;
 
   while (1)
   {
-    if (HAL_UART_Receive(&huart1, &data, 1, 1000) == HAL_OK){
-      HAL_UART_Transmit(&huart1, &data, 1, 1000);
-      if (data == 13){
-        data = 10;
-        HAL_UART_Transmit(&huart1, &data, 1, 1000);
+    if (HAL_UART_Receive(&huart1, &buff[iter], 1, 1000) == HAL_OK){
+      HAL_UART_Transmit(&huart1, &buff[iter++], 1, 1000);
+      if (buff[iter] == 13){
+        buff[iter] = 10;
+        HAL_UART_Transmit(&huart1, &buff[iter++], 1, 1000);
+        Transmit_answer((char *)buff);
       }
       break;
     }
