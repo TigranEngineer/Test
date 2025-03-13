@@ -82,8 +82,6 @@ static uint32_t g_timer = 0;
 static uint8_t g_mod = ON;
 static uint8_t g_default = 0;
 const uint32_t freq_arr[GPIO_PIN_COUNT + 1] = {BLINK_1000, BLINK_100, BLINK_50, BLINK_20, BLINK_10, BLINK_2, BLINK_1, 0, 0};
-static uint8_t buff[1024] = {0};
-static uint16_t iter = 0;
 
 static uint8_t Get_Sum_Bitwise(void)
 {
@@ -97,7 +95,7 @@ static uint8_t Get_Sum_Bitwise(void)
 	sum |= (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) << 5);
 	sum |= (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_6) << 6);
 	sum |= (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_7) << 7);
-
+  
 	return (sum);
 }
 
@@ -106,7 +104,7 @@ static void Blink_Led(void)
   if (g_mod == OFF || g_default == 0){
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
   } else if (g_freq == 0 && g_default == 1) {
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
   } else {
     if (HAL_GetTick() - g_timer >= g_freq){
       g_timer = HAL_GetTick();
@@ -122,19 +120,19 @@ static void Blink_Led(void)
 static uint32_t Default_Mod(void)
 {
   g_default = Get_Sum_Bitwise();
-
+  
 	if (g_default > GPIO_PIN_COUNT) {
     g_default = 0;
     return 0;
   } 
-
+  
   return freq_arr[GPIO_PIN_COUNT - g_default];
 }
 
 static uint8_t Nbrs_Counter(uint32_t nbr)
 {
   uint8_t count = 0;
-
+  
   while (nbr){
     ++count;
     nbr /= 10;
@@ -144,70 +142,73 @@ static uint8_t Nbrs_Counter(uint32_t nbr)
 
 static char *To_Arr(uint32_t freq)
 {
-  static char arr[11];
-  uint8_t i = Nbrs_Counter(freq);
+  static char arr[11] = {0};
+  uint8_t i;
   memset(arr, 0, 11);
   
   if (freq == 0) {
     arr[0] = '0';
   } else {
     uint32_t exp = 1;
-    for (uint8_t tmp = i - 1; tmp > 0; --tmp){
+    for (i = Nbrs_Counter(freq) - 1; i > 0; --i){
       exp *= 10;
     }
     while (exp != 0) {
-      arr[i] = (freq / exp) + '0';
-      freq %= exp;
-      exp /= 10;
-      --i; 
+        arr[i] = (freq / exp) + '0';
+        freq %= exp;
+        exp /= 10;
+        ++i; 
     }
   }
   return arr;
 }
 
-static void Transmit_answer(void)
+static void Transmit_answer(char *buff)
 {
-  uint16_t size = strlen((char *)buff) - 2;
-
+  uint16_t size = strlen(buff) - 2;
+  
   if (size <= 0){
     return;
   }
-
-  if (!strcmp((char *)buff, "help\r\n")) {
-    HAL_UART_Transmit_IT(&huart1, (uint8_t *)"led <on/off>\r\n", strlen("led <on/off>\r\n"));
-    HAL_UART_Transmit_IT(&huart1, (uint8_t *)"led mode <get/set/reset>\r\n", strlen("led mode <get/set/reset>\r\n"));
-  } else if (!strcmp((char *)buff, "led on\r\n")) {
+  
+  if (!strcmp(buff, "help\r\n")) {
+    HAL_UART_Transmit(&huart1, (uint8_t *)"led <on/off>\r\n", strlen("led <on/off>\r\n"), 1000);
+    HAL_UART_Transmit(&huart1, (uint8_t *)"led mode <get/set/reset>\r\n", strlen("led mode <get/set/reset>\r\n"), 1000);
+  } else if (!strcmp(buff, "led on\r\n")) {
     g_mod = ON;
-  } else if (!strcmp((char *)buff, "led off\r\n")) {
+  } else if (!strcmp(buff, "led off\r\n")) {
     g_mod = OFF;
-  } else if (!strcmp((char *)buff, "led mode get\r\n")) {
+  } else if (!strcmp(buff, "led mode get\r\n")) {
     char arr[42] = {0};
     strcpy(arr, "led mode is ");
     strcat(arr, To_Arr(g_freq));
     strcat(arr, "\r\n");
-    HAL_UART_Transmit_IT(&huart1, (uint8_t *)arr, strlen(arr));
-  } else if (!strncmp((char *)buff, "led mode set ", strlen("led mode set "))) {
-    g_freq = atoi((char *)buff + strlen("led mode set "));
-  } else if (!strcmp((char *)buff, "led mode reset\r\n")){
+    HAL_UART_Transmit(&huart1, (uint8_t *)arr, strlen(arr), 1000);
+  } else if (!strncmp(buff, "led mode set ", strlen("led mode set "))) {
+    g_freq = atoi(buff + strlen("led mode set "));
+  } else if (!strcmp(buff, "led mode reset\r\n")){
     g_freq = Default_Mod();
   }
   else {
-    HAL_UART_Transmit_IT(&huart1, (uint8_t *)"command not found\r\n", strlen("command not found\r\n"));
+    HAL_UART_Transmit(&huart1, (uint8_t *)"command not found\r\n", strlen("command not found\r\n"), 1000);
   }
 }
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef * huart)
+static void Echo_UART(void)
 {
-
-  HAL_UART_Transmit_IT(&huart1, &buff[iter], 1);
-  if (buff[iter++] == 13){
-    buff[iter] = 10;
-    HAL_UART_Transmit_IT(&huart1, &buff[iter++], 1);
-    Transmit_answer();
-    memset(buff, 0, 1024);
-    iter = 0;
+  static uint8_t buff[1024] = {0};
+  static uint16_t iter = 0;
+  
+  if (HAL_UART_Receive(&huart1, &buff[iter], 1, 1000) == HAL_OK) {
+    HAL_UART_Transmit(&huart1, &buff[iter], 1, 1000);
+    if (buff[iter++] == '\r'){
+      buff[iter] = '\n';
+      HAL_UART_Transmit(&huart1, &buff[iter++], 1, 1000);
+      Transmit_answer((char *)buff);
+      memset(buff, 0, 1024);
+      iter = 0;
+    }
   }
-  HAL_UART_Receive_IT(&huart1, &buff[iter], 1);
 }
 /* USER CODE END 0 */
 
@@ -251,11 +252,11 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  HAL_UART_Receive_IT(&huart1, &buff[iter], 1);
   g_freq = Default_Mod();
   g_default = Get_Sum_Bitwise();
   while (1)
   {
+    Echo_UART();
     Blink_Led();
     // Echo_UART();
     /* USER CODE END WHILE */
