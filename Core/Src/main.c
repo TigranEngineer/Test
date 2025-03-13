@@ -110,10 +110,6 @@ static void Blink_Led(void)
       g_timer = HAL_GetTick();
       HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_11);
     }
-    // HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
-    // HAL_Delay(g_freq);
-    // HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
-    // HAL_Delay(g_freq);
   }
 }
 
@@ -126,7 +122,7 @@ static uint32_t Default_Mod(void)
     return 0;
   } 
   
-  return freq_arr[GPIO_PIN_COUNT - g_default];
+  return freq_arr[g_default];
 }
 
 static uint8_t Nbrs_Counter(uint32_t nbr)
@@ -163,6 +159,11 @@ static char *To_Arr(uint32_t freq)
   return arr;
 }
 
+static void Transmit_data(char *data)
+{
+  HAL_UART_Transmit(&huart1, (uint8_t *)data, strlen(data), 1000);
+}
+
 static void Transmit_answer(char *buff)
 {
   uint16_t size = strlen(buff) - 2;
@@ -172,8 +173,8 @@ static void Transmit_answer(char *buff)
   }
   
   if (!strcmp(buff, "help\r\n")) {
-    HAL_UART_Transmit(&huart1, (uint8_t *)"led <on/off>\r\n", strlen("led <on/off>\r\n"), 1000);
-    HAL_UART_Transmit(&huart1, (uint8_t *)"led mode <get/set/reset>\r\n", strlen("led mode <get/set/reset>\r\n"), 1000);
+    Transmit_data("led <on/off>\r\n");
+    Transmit_data("led mode <get/set/reset>\r\n");
   } else if (!strcmp(buff, "led on\r\n")) {
     g_mod = ON;
   } else if (!strcmp(buff, "led off\r\n")) {
@@ -183,14 +184,14 @@ static void Transmit_answer(char *buff)
     strcpy(arr, "led mode is ");
     strcat(arr, To_Arr(g_freq));
     strcat(arr, "\r\n");
-    HAL_UART_Transmit(&huart1, (uint8_t *)arr, strlen(arr), 1000);
+    Transmit_data(arr);
   } else if (!strncmp(buff, "led mode set ", strlen("led mode set "))) {
     g_freq = atoi(buff + strlen("led mode set "));
   } else if (!strcmp(buff, "led mode reset\r\n")){
     g_freq = Default_Mod();
   }
   else {
-    HAL_UART_Transmit(&huart1, (uint8_t *)"command not found\r\n", strlen("command not found\r\n"), 1000);
+    Transmit_data("command not found\r\n");
   }
 }
 
@@ -203,7 +204,7 @@ static void Echo_UART(void)
     HAL_UART_Transmit(&huart1, &buff[iter], 1, 1000);
     if (buff[iter++] == '\r'){
       buff[iter] = '\n';
-      HAL_UART_Transmit(&huart1, &buff[iter++], 1, 1000);
+      HAL_UART_Transmit(&huart1, &buff[iter], 1, 1000);
       Transmit_answer((char *)buff);
       memset(buff, 0, 1024);
       iter = 0;
