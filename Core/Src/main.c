@@ -187,7 +187,7 @@ static void Transmit_answer(char *buff)
   else {
     HAL_UART_Transmit_IT(&huart1, (uint8_t *)"command not found\r\n", strlen("command not found\r\n"));
   }
-  
+  HAL_Delay(10);
 }
 
 static void Echo_UART(void)
@@ -198,9 +198,11 @@ static void Echo_UART(void)
 
   if (HAL_UART_Receive_IT(&huart1, &buff[iter], 1) == HAL_OK){
     HAL_UART_Transmit_IT(&huart1, &buff[iter], 1);
+    HAL_Delay(10);
     if (buff[iter++] == 13){
       buff[iter] = 10;
       HAL_UART_Transmit_IT(&huart1, &buff[iter++], 1);
+      HAL_Delay(10);
       Transmit_answer((char *)buff);
       memset(buff, 0, 1024);
       iter = 0;
