@@ -49,6 +49,10 @@ extern "C" {
 #define BLINK_100 10
 #define BLINK_1000 1
 #define GPIO_PIN_COUNT 8
+
+
+#define ON 1
+#define OFF 0
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
