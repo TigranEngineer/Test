@@ -114,25 +114,14 @@ static void Blink_Led(void)
 
 static uint32_t Default_Mod(void)
 {
-	uint8_t state = Get_Sum_Bitwise();
+  g_default = Get_Sum_Bitwise();
 
-	if (state > GPIO_PIN_COUNT) return 0;
+	if (g_default > GPIO_PIN_COUNT) {
+    g_default = 0;
+    return 0;
+  } 
 
-
-	// switch (state){
-	// case 8:
-	// 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
-	// 	break;
-	// case 7:
-	// 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
-	// 	break;
-	// default:
-	// 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
-	// 	HAL_Delay(freq_arr[GPIO_PIN_COUNT - state]);
-	// 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
-	// 	HAL_Delay(freq_arr[GPIO_PIN_COUNT - state]);
-	// }
-  return freq_arr[GPIO_PIN_COUNT - state];
+  return freq_arr[GPIO_PIN_COUNT - g_default];
 }
 
 static uint8_t Nbrs_Counter(uint32_t nbr)
@@ -177,26 +166,26 @@ static void Transmit_answer(char *buff)
     return;
   }
 
-  if (!strcmp(buff, "help")) {
-    HAL_UART_Transmit(&huart1, (uint8_t *)"led <on/off>\r\n", strlen("led <on/off>\r\n"), 1000);
-    HAL_UART_Transmit(&huart1, (uint8_t *)"led mode <get/set/reset>\r\n", strlen("led mode <get/set/reset>\r\n"), 1000);
-  } else if (!strcmp(buff, "led on")) {
+  if (!strcmp(buff, "help\r\n")) {
+    HAL_UART_Transmit_IT(&huart1, (uint8_t *)"led <on/off>\r\n", strlen("led <on/off>\r\n"));
+    HAL_UART_Transmit_IT(&huart1, (uint8_t *)"led mode <get/set/reset>\r\n", strlen("led mode <get/set/reset>\r\n"));
+  } else if (!strcmp(buff, "led on\r\n")) {
     g_mod = ON;
-  } else if (!strcmp(buff, "led off")) {
+  } else if (!strcmp(buff, "led off\r\n")) {
     g_mod = OFF;
-  } else if (!strcmp(buff, "led mode get")) {
+  } else if (!strcmp(buff, "led mode get\r\n")) {
     char arr[42] = {0};
     strcpy(arr, "led mode is ");
     strcat(arr, To_Arr(g_freq));
     strcat(arr, "\r\n");
-    HAL_UART_Transmit(&huart1, (uint8_t *)arr, strlen(arr), 1000);
-  } else if (!strncmp(buff, "led mode set", strlen("led mode set"))) {
-    g_freq = atoi(buff + strlen("led mode set"));
-  } else if (!strcmp(buff, "led mode reset")){
+    HAL_UART_Transmit_IT(&huart1, (uint8_t *)arr, strlen(arr));
+  } else if (!strncmp(buff, "led mode set ", strlen("led mode set "))) {
+    g_freq = atoi(buff + strlen("led mode set "));
+  } else if (!strcmp(buff, "led mode reset\r\n")){
     g_freq = Default_Mod();
   }
   else {
-    HAL_UART_Transmit(&huart1, (uint8_t *)"command not found\n", strlen("command not found\n"), 1000);
+    HAL_UART_Transmit_IT(&huart1, (uint8_t *)"command not found\r\n", strlen("command not found\r\n"));
   }
   
 }
@@ -207,11 +196,11 @@ static void Echo_UART(void)
   static uint16_t iter = 0;
 
 
-  if (HAL_UART_Receive(&huart1, &buff[iter], 1, 1000) == HAL_OK){
-    HAL_UART_Transmit(&huart1, &buff[iter], 1, 1000);
+  if (HAL_UART_Receive_IT(&huart1, &buff[iter], 1) == HAL_OK){
+    HAL_UART_Transmit_IT(&huart1, &buff[iter], 1);
     if (buff[iter++] == 13){
       buff[iter] = 10;
-      HAL_UART_Transmit(&huart1, &buff[iter++], 1, 1000);
+      HAL_UART_Transmit_IT(&huart1, &buff[iter++], 1);
       Transmit_answer((char *)buff);
       memset(buff, 0, 1024);
       iter = 0;
