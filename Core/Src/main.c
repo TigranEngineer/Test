@@ -128,7 +128,7 @@ static uint32_t Default_Mod(void)
   g_default = Get_Sum_Bitwise();
   
 	if (g_default > GPIO_PIN_COUNT || g_default < 2) {
-    g_default = 0;
+    g_default = (g_default == 1) ? 1 : 0;
     return g_freq;
   } 
   
