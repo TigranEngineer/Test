@@ -176,16 +176,13 @@ static void Transmit_data(char *data)
   HAL_UART_Transmit(&huart1, (uint8_t *)data, strlen(data), 10);
 }
 
-#define MAGIC_NUMBER 10000
 
 static void ADC_Handler(void)
 {
-  uint32_t val = MAGIC_NUMBER;
   HAL_ADC_Start(&hadc1);
-  while (val-- > 0) {
-    Transmit_data(To_Arr(HAL_ADC_GetValue(&hadc1)));
-    Transmit_data("\r\n");
-  }
+  HAL_ADC_PollForConversion(&hadc1, 10);
+  Transmit_data(To_Arr(HAL_ADC_GetValue(&hadc1)));
+  Transmit_data("\r\n");
   HAL_ADC_Stop(&hadc1);
 }
 
