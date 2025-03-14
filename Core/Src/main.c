@@ -81,7 +81,17 @@ static uint32_t g_freq = 0;
 static uint32_t g_timer = 0;
 static uint8_t g_mod = ON;
 static uint8_t g_default = 0;
-const uint32_t freq_arr[GPIO_PIN_COUNT + 1] = {BLINK_1000, BLINK_100, BLINK_50, BLINK_20, BLINK_10, BLINK_2, BLINK_1, 0, 0};
+const uint32_t freq_arr[GPIO_PIN_COUNT + 1] = {
+  0,
+  0,
+  BLINK_1,
+  BLINK_2,
+  BLINK_10,
+  BLINK_20,
+  BLINK_50,
+  BLINK_100,
+  BLINK_1000
+};
 
 static uint8_t Get_Sum_Bitwise(void)
 {
@@ -117,9 +127,9 @@ static uint32_t Default_Mod(void)
 {
   g_default = Get_Sum_Bitwise();
   
-	if (g_default > GPIO_PIN_COUNT) {
+	if (g_default > GPIO_PIN_COUNT || g_default < 2) {
     g_default = 0;
-    return 0;
+    return g_freq;
   } 
   
   return freq_arr[g_default];
@@ -186,7 +196,12 @@ static void Transmit_answer(char *buff)
     strcat(arr, "\r\n");
     Transmit_data(arr);
   } else if (!strncmp(buff, "led mode set ", strlen("led mode set "))) {
-    g_freq = atoi(buff + strlen("led mode set "));
+    uint32_t tmp = atoi(buff + strlen("led mode set "));
+    if (tmp < 1 || tmp > 5000) {
+      Transmit_data("Range of allowed mode is [1, 5000]\r\n");
+    } else {
+      g_freq = tmp;
+    }
   } else if (!strcmp(buff, "led mode reset\r\n")){
     g_freq = Default_Mod();
   }
@@ -254,7 +269,6 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   g_freq = Default_Mod();
-  g_default = Get_Sum_Bitwise();
   while (1)
   {
     Echo_UART();
