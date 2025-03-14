@@ -180,9 +180,12 @@ static void Transmit_data(char *data)
 static void ADC_Handler(void)
 {
   HAL_ADC_Start(&hadc1);
+
   HAL_ADC_PollForConversion(&hadc1, 10);
+
   Transmit_data(To_Arr(HAL_ADC_GetValue(&hadc1)));
   Transmit_data("\r\n");
+
   HAL_ADC_Stop(&hadc1);
 }
 
@@ -195,41 +198,56 @@ static void Transmit_answer(char *buff)
   }
   
   if (!strcmp(buff, "help\r\n")) {
+
     Transmit_data("led <on/off>\r\n");
     Transmit_data("led mode <get/set/reset>\r\n");
+
   } else if (!strcmp(buff, "led on\r\n")) {
+
     g_default = Get_Sum_Bitwise();
     g_mod = ON;
     Transmit_data("led turned on\r\n");
+
   } else if (!strcmp(buff, "led off\r\n")) {
+
     g_default = 0;
     g_mod = OFF;
     Transmit_data("led turned off\r\n");
+
   } else if (!strcmp(buff, "led mode get\r\n")) {
-    // char arr[42] = {0};
-    // strcpy(arr, "led mode is ");
-    // strcat(arr, To_Arr(g_freq));
-    // strcat(arr, "\r\n");
-    // Transmit_data(arr);
+
     Transmit_data("led mode is ");
     Transmit_data(To_Arr(g_freq));
     Transmit_data("\r\n");
+
   } else if (!strncmp(buff, "led mode set ", strlen("led mode set "))) {
+
     uint32_t tmp = atoi(buff + strlen("led mode set "));
+
     if (tmp < 1 || tmp > 5000) {
+
       Transmit_data("Range of allowed mode is [1, 5000]\r\n");
+
     } else {
+
       g_freq = tmp;
       g_default = 1;
       Transmit_data("led mode has been set successfully\r\n");
+
     }
   } else if (!strcmp(buff, "led mode reset\r\n")){
+
     g_freq = Default_Mod();
     Transmit_data("led mode has been reset successfully\r\n");
+
   } else if (!strcmp(buff, "adc read\r\n")) {
+
     ADC_Handler();
+
   } else {
+
     Transmit_data("command not found\r\n");
+
   }
 }
 
