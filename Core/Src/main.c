@@ -171,7 +171,7 @@ static char *To_Arr(uint32_t freq)
 
 static void Transmit_data(char *data)
 {
-  HAL_UART_Transmit(&huart1, (uint8_t *)data, strlen(data), 1000);
+  HAL_UART_Transmit(&huart1, (uint8_t *)data, strlen(data), 1);
 }
 
 static void Transmit_answer(char *buff)
@@ -186,9 +186,13 @@ static void Transmit_answer(char *buff)
     Transmit_data("led <on/off>\r\n");
     Transmit_data("led mode <get/set/reset>\r\n");
   } else if (!strcmp(buff, "led on\r\n")) {
+    g_default = Get_Sum_Bitwise();
     g_mod = ON;
+    Transmit_data("led turned on\r\n");
   } else if (!strcmp(buff, "led off\r\n")) {
+    g_default = 0;
     g_mod = OFF;
+    Transmit_data("led turned off\r\n");
   } else if (!strcmp(buff, "led mode get\r\n")) {
     char arr[42] = {0};
     strcpy(arr, "led mode is ");
@@ -201,9 +205,12 @@ static void Transmit_answer(char *buff)
       Transmit_data("Range of allowed mode is [1, 5000]\r\n");
     } else {
       g_freq = tmp;
+      g_default = 1;
+      Transmit_data("led mode successfully setted\r\n");
     }
   } else if (!strcmp(buff, "led mode reset\r\n")){
     g_freq = Default_Mod();
+    Transmit_data("led mode successfully resetted\r\n");
   }
   else {
     Transmit_data("command not found\r\n");
@@ -215,11 +222,11 @@ static void Echo_UART(void)
   static uint8_t buff[1024] = {0};
   static uint16_t iter = 0;
   
-  if (HAL_UART_Receive(&huart1, &buff[iter], 1, 1000) == HAL_OK) {
-    HAL_UART_Transmit(&huart1, &buff[iter], 1, 1000);
+  if (HAL_UART_Receive(&huart1, &buff[iter], 1, 1) == HAL_OK) {
+    HAL_UART_Transmit(&huart1, &buff[iter], 1, 1);
     if (buff[iter++] == '\r'){
       buff[iter] = '\n';
-      HAL_UART_Transmit(&huart1, &buff[iter], 1, 1000);
+      HAL_UART_Transmit(&huart1, &buff[iter], 1, 1);
       Transmit_answer((char *)buff);
       memset(buff, 0, 1024);
       iter = 0;
