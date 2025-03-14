@@ -171,7 +171,7 @@ static char *To_Arr(uint32_t freq)
 
 static void Transmit_data(char *data)
 {
-  HAL_UART_Transmit(&huart1, (uint8_t *)data, strlen(data), 1);
+  HAL_UART_Transmit(&huart1, (uint8_t *)data, strlen(data), 10);
 }
 
 static void Transmit_answer(char *buff)
@@ -223,10 +223,10 @@ static void Echo_UART(void)
   static uint16_t iter = 0;
   
   if (HAL_UART_Receive(&huart1, &buff[iter], 1, 1) == HAL_OK) {
-    HAL_UART_Transmit(&huart1, &buff[iter], 1, 1);
+    HAL_UART_Transmit(&huart1, &buff[iter], 1, 10);
     if (buff[iter++] == '\r'){
       buff[iter] = '\n';
-      HAL_UART_Transmit(&huart1, &buff[iter], 1, 1);
+      HAL_UART_Transmit(&huart1, &buff[iter], 1, 10);
       Transmit_answer((char *)buff);
       memset(buff, 0, 1024);
       iter = 0;
