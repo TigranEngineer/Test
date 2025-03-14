@@ -248,7 +248,7 @@ static void Echo_UART(void)
       HAL_UART_Transmit(&huart1, &buff[iter], 1, 10);
       Transmit_answer((char *)buff);
       memset(buff, 0, 1024);
-      iter = 0;
+      iter = 1;
     }
   }
 }
