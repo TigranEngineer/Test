@@ -206,11 +206,11 @@ static void Transmit_answer(char *buff)
     } else {
       g_freq = tmp;
       g_default = 1;
-      Transmit_data("led mode successfully setted\r\n");
+      Transmit_data("led mode has been set successfully\r\n");
     }
   } else if (!strcmp(buff, "led mode reset\r\n")){
     g_freq = Default_Mod();
-    Transmit_data("led mode successfully resetted\r\n");
+    Transmit_data("led mode has been reset successfully\r\n");
   }
   else {
     Transmit_data("command not found\r\n");
