@@ -21,8 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <string.h>
-#include <stdlib.h>
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,9 +44,13 @@ ADC_HandleTypeDef hadc1;
 
 I2C_HandleTypeDef hi2c1;
 
+SPI_HandleTypeDef hspi2;
+
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
+
+extern g_data datas;
 
 /* USER CODE END PV */
 
@@ -58,6 +61,7 @@ static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_ADC1_Init(void);
+static void MX_SPI2_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -76,197 +80,6 @@ static void MX_ADC1_Init(void);
 //			HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_6) + HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_7));
 //}
 
-static uint8_t Get_Sum_Bitwise(void);
-static uint32_t Default_Mod(void);
-
-static uint32_t g_freq = 0;
-static uint32_t g_timer = 0;
-static uint8_t g_mod = ON;
-static uint8_t g_default = 0;
-const uint32_t freq_arr[GPIO_PIN_COUNT + 1] = {
-  0,
-  0,
-  BLINK_1,
-  BLINK_2,
-  BLINK_10,
-  BLINK_20,
-  BLINK_50,
-  BLINK_100,
-  BLINK_1000
-};
-
-static uint8_t Get_Sum_Bitwise(void)
-{
-  uint8_t sum= 0;
-
-	sum |= HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);
-	sum |= (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) << 1);
-	sum |= (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) << 2);
-	sum |= (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) << 3);
-	sum |= (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) << 4);
-	sum |= (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) << 5);
-	sum |= (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_6) << 6);
-	sum |= (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_7) << 7);
-  
-	return (sum);
-}
-
-static void Blink_Led(void)
-{
-  if (g_mod == OFF || g_default == 0){
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
-  } else if (g_freq == 0 && g_default == 1) {
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
-  } else {
-    if (HAL_GetTick() - g_timer >= g_freq){
-      g_timer = HAL_GetTick();
-      HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_11);
-    }
-  }
-}
-
-static uint32_t Default_Mod(void)
-{
-  g_default = Get_Sum_Bitwise();
-  
-	if (g_default > GPIO_PIN_COUNT || g_default < 2) {
-    g_default = (g_default == 1) ? 1 : 0;
-    return g_freq;
-  } 
-  
-  return freq_arr[g_default];
-}
-
-static uint8_t Nbrs_Counter(uint32_t nbr)
-{
-  uint8_t count = 0;
-  
-  while (nbr){
-    ++count;
-    nbr /= 10;
-  }
-  return count;
-}
-
-static char *To_Arr(uint32_t freq)
-{
-  static char arr[11] = {0};
-  uint8_t i;
-  memset(arr, 0, 11);
-  
-  if (freq == 0) {
-    arr[0] = '0';
-  } else {
-    uint32_t exp = 1;
-    for (i = Nbrs_Counter(freq) - 1; i > 0; --i){
-      exp *= 10;
-    }
-    while (exp != 0) {
-        arr[i] = (freq / exp) + '0';
-        freq %= exp;
-        exp /= 10;
-        ++i; 
-    }
-  }
-  return arr;
-}
-
-static void Transmit_data(char *data)
-{
-  HAL_UART_Transmit(&huart1, (uint8_t *)data, strlen(data), 10);
-}
-
-
-static void ADC_Handler(void)
-{
-  HAL_ADC_Start(&hadc1);
-
-  HAL_ADC_PollForConversion(&hadc1, 10);
-
-  Transmit_data(To_Arr(HAL_ADC_GetValue(&hadc1)));
-  Transmit_data("\r\n");
-
-  HAL_ADC_Stop(&hadc1);
-}
-
-static void Transmit_answer(char *buff)
-{
-  uint16_t size = strlen(buff) - 2;
-  
-  if (size <= 0){
-    return;
-  }
-  
-  if (!strcmp(buff, "help\r\n")) {
-
-    Transmit_data("led <on/off>\r\n");
-    Transmit_data("led mode <get/set/reset>\r\n");
-
-  } else if (!strcmp(buff, "led on\r\n")) {
-
-    g_default = Get_Sum_Bitwise();
-    g_mod = ON;
-    Transmit_data("led turned on\r\n");
-
-  } else if (!strcmp(buff, "led off\r\n")) {
-
-    g_default = 0;
-    g_mod = OFF;
-    Transmit_data("led turned off\r\n");
-
-  } else if (!strcmp(buff, "led mode get\r\n")) {
-
-    Transmit_data("led mode is ");
-    Transmit_data(To_Arr(g_freq));
-    Transmit_data("\r\n");
-
-  } else if (!strncmp(buff, "led mode set ", strlen("led mode set "))) {
-
-    uint32_t tmp = atoi(buff + strlen("led mode set "));
-
-    if (tmp < 1 || tmp > 5000) {
-
-      Transmit_data("Range of allowed mode is [1, 5000]\r\n");
-
-    } else {
-
-      g_freq = tmp;
-      g_default = 1;
-      Transmit_data("led mode has been set successfully\r\n");
-
-    }
-  } else if (!strcmp(buff, "led mode reset\r\n")){
-
-    g_freq = Default_Mod();
-    Transmit_data("led mode has been reset successfully\r\n");
-
-  } else if (!strcmp(buff, "adc read\r\n")) {
-
-    ADC_Handler();
-
-  } else {
-
-    Transmit_data("command not found\r\n");
-
-  }
-}
-
-static void Echo_UART(void)
-{
-  static uint8_t buff[1024] = {0};
-  static uint16_t iter = 0;
-  
-  if (HAL_UART_Receive(&huart1, &buff[iter], 1, 1) == HAL_OK) {
-    HAL_UART_Transmit(&huart1, &buff[iter], 1, 10);
-    if (buff[iter++] == '\r'){
-      buff[iter] = '\n';
-      HAL_UART_Transmit(&huart1, &buff[iter], 1, 10);
-      Transmit_answer((char *)buff);
-      memset(buff, 0, 1024);
-      iter = 0;
-    }
-  }
-}
 /* USER CODE END 0 */
 
 /**
@@ -304,13 +117,14 @@ int main(void)
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   MX_ADC1_Init();
+  MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  g_freq = Default_Mod();
+  datas.g_freq = Default_Mod();
   while (1)
   {
     Echo_UART();
@@ -461,6 +275,46 @@ static void MX_I2C1_Init(void)
   /* USER CODE BEGIN I2C1_Init 2 */
 
   /* USER CODE END I2C1_Init 2 */
+
+}
+
+/**
+  * @brief SPI2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_SPI2_Init(void)
+{
+
+  /* USER CODE BEGIN SPI2_Init 0 */
+
+  /* USER CODE END SPI2_Init 0 */
+
+  /* USER CODE BEGIN SPI2_Init 1 */
+
+  /* USER CODE END SPI2_Init 1 */
+  /* SPI2 parameter configuration*/
+  hspi2.Instance = SPI2;
+  hspi2.Init.Mode = SPI_MODE_MASTER;
+  hspi2.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi2.Init.DataSize = SPI_DATASIZE_4BIT;
+  hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi2.Init.NSS = SPI_NSS_SOFT;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi2.Init.CRCPolynomial = 7;
+  hspi2.Init.CRCLength = SPI_CRC_LENGTH_DATASIZE;
+  hspi2.Init.NSSPMode = SPI_NSS_PULSE_ENABLE;
+  if (HAL_SPI_Init(&hspi2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN SPI2_Init 2 */
+
+  /* USER CODE END SPI2_Init 2 */
 
 }
 

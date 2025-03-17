@@ -31,6 +31,9 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "uart.h"
+#include "spi.h"
+#include "adc.h"
 
 /* USER CODE END Includes */
 
@@ -41,18 +44,7 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
-#define BLINK_1 1000
-#define BLINK_2 500
-#define BLINK_10 100
-#define BLINK_20 50
-#define BLINK_50 20
-#define BLINK_100 10
-#define BLINK_1000 1
-#define GPIO_PIN_COUNT 8
 
-
-#define ON 1
-#define OFF 0
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
