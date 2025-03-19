@@ -11,6 +11,7 @@
 #include "adc.h"
 #include "spi.h"
 
+uint8_t Nbrs_Counter(uint32_t nbr);
 char *To_Arr(uint32_t freq);
 uint32_t Default_Mod(void);
 void Blink_Led(void);

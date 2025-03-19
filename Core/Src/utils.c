@@ -44,7 +44,7 @@ uint32_t Default_Mod(void)
   return datas.freq_arr[datas.g_default];
 }
 
-static uint8_t Nbrs_Counter(uint32_t nbr)
+uint8_t Nbrs_Counter(uint32_t nbr)
 {
   uint8_t count = 0;
   
