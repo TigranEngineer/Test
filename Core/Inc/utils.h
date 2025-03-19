@@ -2,7 +2,7 @@
 # define UTILS_H
 
 
-#define ARR_SIZE 10
+#define COUNTER 10
 
 #include "stm32f7xx_hal.h"
 #include <string.h>

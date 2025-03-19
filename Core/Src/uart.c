@@ -80,17 +80,17 @@ static void Transmit_answer(char *buff)
 
     ADC_Handler();
 
-  } else if (!strcmp(buff, "eeprom write\r\n")) {
+  } else if (!strncmp(buff, "eeprom write ", strlen("eeprom write "))) {
 
-    // Eeprom_write();
+    Eeprom_write(buff + strlen("eeprom write "));
 
-  } else if (!strcmp(buff, "eeprom read\r\n")) {
+  } else if (!strncmp(buff, "eeprom read ", strlen("eeprom read "))) {
 
-    // Eeprom_read();
+    Eeprom_read(buff + strlen("eeprom read "));
 
-  } else if (!strcmp(buff, "eeprom read_bulk\r\n")) {
+  } else if (!strncmp(buff, "eeprom read_bulk ", strlen("eeprom read_bulk "))) {
 
-    // Eeprom_read_bulk();
+    Eeprom_read_bulk(buff + strlen("eeprom read_bulk "));
 
   } else {
 
