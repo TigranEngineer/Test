@@ -82,15 +82,15 @@ static void Transmit_answer(char *buff)
 
   } else if (!strcmp(buff, "eeprom write\r\n")) {
 
-    // eeprom_write();
+    // Eeprom_write();
 
   } else if (!strcmp(buff, "eeprom read\r\n")) {
 
-    // eeprom_read();
+    // Eeprom_read();
 
   } else if (!strcmp(buff, "eeprom read_bulk\r\n")) {
 
-    // eeprom_read_bulk();
+    // Eeprom_read_bulk();
 
   } else {
 
