@@ -80,6 +80,18 @@ static void Transmit_answer(char *buff)
 
     ADC_Handler();
 
+  } else if (!strcmp(buff, "eeprom write\r\n")) {
+
+    // eeprom_write();
+
+  } else if (!strcmp(buff, "eeprom read\r\n")) {
+
+    // eeprom_read();
+
+  } else if (!strcmp(buff, "eeprom read_bulk\r\n")) {
+
+    // eeprom_read_bulk();
+
   } else {
 
     Transmit_data("command not found\r\n");

@@ -4,8 +4,6 @@
 
 #define ARR_SIZE 10
 
-
-
 #include "stm32f7xx_hal.h"
 #include <string.h>
 #include <stdlib.h>
