@@ -30,7 +30,7 @@ static void Transmit_answer(char *buff)
   uint16_t size = strlen(buff) - 2;
   
   if (size <= 0){
-    return;
+    return Transmit_data("PCI100:$ ");
   }
   
   if (!strcmp(buff, "help\r\n")) {
@@ -97,6 +97,7 @@ static void Transmit_answer(char *buff)
     Transmit_data("command not found\r\n");
 
   }
+  Transmit_data("PCI100:$ ");
 }
 
 void Echo_UART(void)

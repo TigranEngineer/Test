@@ -125,6 +125,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   datas.g_freq = Default_Mod();
+  Transmit_data("PCI100:$ ");
   while (1)
   {
     Echo_UART();
