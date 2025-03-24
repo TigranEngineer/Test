@@ -31,9 +31,10 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "uart.h"
-#include "spi.h"
-#include "adc.h"
+#include "../Src/UART/uart.h"
+#include "../Src/SPI/spi.h"
+#include "../Src/ADC/adc.h"
+#include "../Src/Led/led.h"
 
 /* USER CODE END Includes */
 

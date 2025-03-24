@@ -1,10 +1,8 @@
 #include "utils.h"
 
-extern g_data datas;
-
 uint8_t Get_Sum_Bitwise(void)
 {
-  uint8_t sum= 0;
+	uint8_t sum= 0;
 
 	sum |= HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);
 	sum |= (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) << 1);
@@ -18,30 +16,22 @@ uint8_t Get_Sum_Bitwise(void)
 	return (sum);
 }
 
-void Blink_Led(void)
+uint32_t Space_Counter(char *buff)
 {
-  if (datas.g_mod == OFF || datas.g_default == 0){
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
-  } else if (datas.g_freq == 0 && datas.g_default == 1) {
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
-  } else {
-    if (HAL_GetTick() - datas.g_timer >= datas.g_freq){
-        datas.g_timer = HAL_GetTick();
-      HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_11);
-    }
-  }
+	uint32_t counter = 0;
+	while (buff[counter] != 0 && buff[counter] != '\r' && isspace((uint8_t)buff[counter])) {
+		++counter;
+	}
+	return counter;
 }
 
-uint32_t Default_Mod(void)
+uint32_t Not_Space_Counter(char *buff)
 {
-  datas.g_default = Get_Sum_Bitwise();
-  
-	if (datas.g_default > GPIO_PIN_COUNT || datas.g_default < 2) {
-    datas.g_default = (datas.g_default == 1) ? 1 : 0;
-    return datas.g_freq;
-  } 
-  
-  return datas.freq_arr[datas.g_default];
+	uint32_t counter = 0;
+	while (buff[counter] != 0 && !isspace((uint8_t)buff[counter])) {
+		++counter;
+	}
+	return counter;
 }
 
 uint8_t Nbrs_Counter(uint32_t nbr)
@@ -77,3 +67,15 @@ char *To_Arr(uint32_t freq)
   }
   return arr;
 }
+
+bool Is_Nbr(char *str, uint32_t len)
+{
+	for (uint32_t i = 0; i < len && !isspace((uint8_t)str[i]); ++i) {
+		if (str[i] > '9' || str[i] < '0') {
+			return false;
+		}
+	}
+	return true;
+}
+
+

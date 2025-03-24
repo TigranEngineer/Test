@@ -50,7 +50,7 @@ UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
 
-extern g_data datas;
+
 
 /* USER CODE END PV */
 
@@ -124,13 +124,32 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  datas.g_freq = Default_Mod();
-  Transmit_data("PCI100:$ ");
+  led_configs led_config = {
+    {
+      0,
+      0,
+      BLINK_1,
+      BLINK_2,
+      BLINK_10,
+      BLINK_20,
+      BLINK_50,
+      BLINK_100,
+      BLINK_1000
+    },
+    0,
+    0,
+    ON,
+    0
+  };
+
+  led_config.freq = Default_Mod(&led_config);
   while (1)
   {
-    Echo_UART();
-    Blink_Led();
-    // Echo_UART();
+    Echo_UART(&led_config);
+    Blink_Led(&led_config);
+
+//	  printf("Hello world\r\n");
+//	  HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
