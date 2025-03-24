@@ -3,6 +3,7 @@
 extern UART_HandleTypeDef huart1;
 
 // PUTCHAR_PROTOTYPE - retargets printf to UART transmit
+// ch - character to transmit by UART
 PUTCHAR_PROTOTYPE
 {
 	HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 100);
@@ -28,7 +29,7 @@ void Echo_UART(led_configs *led_config)
 		if (isspace(ch) || isalnum(ch) || ch == '\b') {
 
 			if (ch == '\r') {
-				printf("\r\n");
+				printf(ENTER);
 			} else if (ch != '\b'){
 				HAL_UART_Transmit(&huart1, &ch, 1, 100);
 			}

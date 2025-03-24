@@ -2,8 +2,10 @@
 
 extern SPI_HandleTypeDef hspi1;
 
-#define WRITE_SIZE 4
 
+// Eeprom_write - writes a byte of data in received address
+// address - where to write
+// data - what to write
 void Eeprom_write(uint16_t address, uint16_t data)
 {
     uint8_t wr = 0x2;
@@ -17,8 +19,8 @@ void Eeprom_write(uint16_t address, uint16_t data)
     }
 }
 
-#define READ_SIZE 3
-
+// Eeprom_read - reads a byte of data from received address and shows it
+// address - where from to read
 void Eeprom_read(uint16_t address)
 {
     uint8_t rd = 0x3;
@@ -33,6 +35,9 @@ void Eeprom_read(uint16_t address)
     }
 }
 
+// Eeprom_read_bulk - reads a data of received size from received address and shows them
+// address - where from to start read process
+// size - counts of byte to read
 void Eeprom_read_bulk(uint16_t address, uint16_t size)
 {
     uint8_t rd = 0x3;
@@ -41,13 +46,13 @@ void Eeprom_read_bulk(uint16_t address, uint16_t size)
 
     memset(receive, 0, size);
 
-    if (size != 0 && HAL_SPI_Transmit(&hspi1, transmit, READ_SIZE + size, 1000) == HAL_OK) {
+    if (size != 0 && HAL_SPI_TransmitReceive(&hspi1, transmit, receive, READ_SIZE + size, 1000) == HAL_OK) {
         for (uint8_t i = 0; i < size; ++i) {
         	printf("%d", receive[i]);
 	        if (i != size - 1) {
 	        	printf(" ");
 	        } else {
-	        	printf("\r\n");
+	        	printf(ENTER);
 	        }
         }
     } else {

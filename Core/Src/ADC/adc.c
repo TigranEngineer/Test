@@ -2,6 +2,7 @@
 
 extern ADC_HandleTypeDef hadc1;
 
+// ADC_Handler - handles received analog, convert to digital and shows voltage
 void ADC_Handler(void)
 {
   HAL_ADC_Start(&hadc1);

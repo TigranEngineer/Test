@@ -1,5 +1,8 @@
 #include "cli.h"
 
+// Led_Supported_Freqs - informs user about available and supported frequencies
+// freq_arr - available and supported frequencies array
+// size - size of frequencies array
 static void Led_Supported_Freqs(const uint32_t *freq_arr, uint8_t size)
 {
 	printf("Supported frequencies are:\r\n");
@@ -8,10 +11,15 @@ static void Led_Supported_Freqs(const uint32_t *freq_arr, uint8_t size)
 	}
 }
 
+
+// _Led_Blink_Command_Handler - handles led blink commands
+// buff - user's input after blink and spaces
+// led_config - configurations of led state
 static void _Led_Blink_Command_Handler(char *buff, led_configs *led_config)
 {
 	uint16_t size = strlen(buff) - ENTER_LEN;
 
+	//	if no argument received, informs user about available and supported options
 	if (size == 0) {
 		char *arr[] = {
 		(HELP_CLI_LED_BLINK),
@@ -32,21 +40,25 @@ static void _Led_Blink_Command_Handler(char *buff, led_configs *led_config)
 		uint32_t len = Not_Space_Counter(tmp);
 
 		if (len && Led_Is_Freq(tmp, len, led_config->freq_arr) && !strcmp(tmp + len + Space_Counter(tmp + len), ENTER)) {
-			Led_Set_Freq(tmp, led_config);
+			Led_Set_Freq(atoi(tmp), led_config);
 			printf(LED_BLINK_SET_FREQ);
 		} else {
 			printf("Given frequency not supported\r\n");
 			Led_Supported_Freqs(led_config->freq_arr, sizeof(led_config->freq_arr) / sizeof(uint32_t));
 		}
 	} else {
-		Invalid_Command();
+		printf("led blink: option not supported\r\n");
 	}
 }
 
+// Led_Command_Handler - handles led commands
+// buff - user's input after led and spaces
+// led_config - configurations of led state
 void Led_Command_Handler(char *buff, led_configs *led_config)
 {
 	uint16_t size = strlen(buff) - ENTER_LEN;
 
+//	if no argument received, informs user about available and supported options
 	if (size == 0) {
 		char *arr[] = {
 		(HELP_CLI_LED),
@@ -66,6 +78,6 @@ void Led_Command_Handler(char *buff, led_configs *led_config)
 	} else if (!strncmp(buff, LED_BLINK, LED_BLINK_LEN)) {
 		_Led_Blink_Command_Handler(buff + LED_BLINK_LEN + Space_Counter(buff + LED_BLINK_LEN), led_config);
 	} else {
-		Invalid_Command();
+		printf("led: option not supported\r\n");
 	}
 }

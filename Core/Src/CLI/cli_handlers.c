@@ -1,5 +1,7 @@
 #include "cli.h"
 
+// Print_Help - shows to user available and supported commands
+// buff - user input after help and spaces
 void Print_Help(char *buff)
 {
 	uint16_t size = strlen(buff) - ENTER_LEN;
@@ -18,10 +20,11 @@ void Print_Help(char *buff)
 			printf("%s", arr[i]);
 		}
 	} else {
-		Invalid_Command();
+		printf("help: no options and arguments required\r\n");
 	}
 }
 
+// Invalid_Command - informs to user that command not supported
 void Invalid_Command(void)
 {
 	printf(CLI_NOT_SET);

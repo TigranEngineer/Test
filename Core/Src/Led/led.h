@@ -30,7 +30,7 @@ typedef struct s_led_configs
 uint32_t Default_Mod(led_configs *led_config);
 void Blink_Led(led_configs *led_config);
 void Led_Turn_On_Off(led_configs *led_config, bool mod);
-void Led_Set_Freq(char *buff, led_configs *led_config);
+void Led_Set_Freq(uint32_t new_freq, led_configs *led_config);
 void Led_Reset_Freq(led_configs *led_config);
 uint32_t Led_Get_Freq(led_configs *led_config);
 bool Led_Is_Freq(char *buff, uint32_t buff_len, const uint32_t *freq_arr);

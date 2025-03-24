@@ -1,14 +1,18 @@
 #include "cli.h"
 
+// Command_Handler - Handles user input line
+// buffer - user's input line to handle
+// led_config - configurations of led state
 static void Command_Handler(char *buff, led_configs *led_config)
 {
 	uint16_t size = strlen(buff) - ENTER_LEN;
 
-//   If the input buffer is ENTER with SPACES then print prompt and return
+//   If the input buffer is ENTER with SPACES then print return
 	if (size == 0){
 		return ;
 	}
 
+//	checking user input with supported commands
 	if (!strncmp(buff, HELP, HELP_LEN)) {
 		Print_Help(buff + HELP_LEN + Space_Counter(buff + HELP_LEN));
 	}
@@ -21,6 +25,7 @@ static void Command_Handler(char *buff, led_configs *led_config)
 	else if (!strncmp(buff, EEPROM, EEPROM_LEN)) {
 		EEPROM_Command_Handler(buff + EEPROM_LEN + Space_Counter(buff + EEPROM_LEN));
 	} else {
+//		if command not supported calls Invalid_Command() function
 		Invalid_Command();
 	}
 }
@@ -38,8 +43,8 @@ void CLI_Input_Char(char ch, led_configs *led_config)
 	if (ch == '\b') {
 		if (iter != 0) {
 			buff[--iter] = 0;
-			Transmit_data("\b \b");
-//			printf("\b \b");
+			printf(BACKSPACE);
+			fflush(stdout);
 		}
 		return ;
 	}
@@ -48,8 +53,8 @@ void CLI_Input_Char(char ch, led_configs *led_config)
 	if (ch == '\r'){
 		buff[iter] = '\n';
 		Command_Handler(buff + Space_Counter(buff), led_config);
-		Transmit_data(CLI_PROMPT);
-//		printf(CLI_PROMPT);
+		printf(CLI_PROMPT);
+		fflush(stdout);
 		memset(buff, 0, BUFFER_SIZE);
 		iter = 0;
 	}

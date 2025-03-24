@@ -25,6 +25,7 @@
 #define BUFFER_SIZE 8192
 #define ENTER_LEN 2
 #define ENTER "\r\n"
+#define BACKSPACE "\b \b"
 #define HELP "help"
 #define HELP_LEN 4
 
