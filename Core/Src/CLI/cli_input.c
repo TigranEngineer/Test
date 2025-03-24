@@ -3,7 +3,7 @@
 // Command_Handler - Handles user input line
 // buffer - user's input line to handle
 // led_config - configurations of led state
-static void Command_Handler(char *buff, led_configs *led_config)
+static void Command_Handler(char *buff)
 {
 	uint16_t size = strlen(buff) - ENTER_LEN;
 
@@ -17,7 +17,7 @@ static void Command_Handler(char *buff, led_configs *led_config)
 		Print_Help(buff + HELP_LEN + Space_Counter(buff + HELP_LEN));
 	}
 	else if (!strncmp(buff, LED, LED_LEN)) {
-		Led_Command_Handler(buff + LED_LEN + Space_Counter(buff + LED_LEN), led_config);
+		Led_Command_Handler(buff + LED_LEN + Space_Counter(buff + LED_LEN));
 	}
 	else if (!strncmp(buff, CLI_ADC, CLI_ADC_LEN)) {
 		ADC_Command_Handler(buff + CLI_ADC_LEN + Space_Counter(buff + CLI_ADC_LEN));
@@ -35,10 +35,14 @@ static void Command_Handler(char *buff, led_configs *led_config)
 // ch - character to store in buffer
 // led_config - configurations of led state
 
-void CLI_Input_Char(char ch, led_configs *led_config)
+void CLI_Input_Char(char ch)
 {
 	static char buff[BUFFER_SIZE] = {0};
 	static uint16_t iter = 0;
+
+	if (iter == BUFFER_SIZE) {
+		iter = 0;
+	}
 
 	if (ch == '\b') {
 		if (iter != 0) {
@@ -46,13 +50,13 @@ void CLI_Input_Char(char ch, led_configs *led_config)
 			printf(BACKSPACE);
 			fflush(stdout);
 		}
-		return ;
+		return;
 	}
 
 	buff[iter++] = ch;
 	if (ch == '\r'){
 		buff[iter] = '\n';
-		Command_Handler(buff + Space_Counter(buff), led_config);
+		Command_Handler(buff + Space_Counter(buff));
 		printf(CLI_PROMPT);
 		fflush(stdout);
 		memset(buff, 0, BUFFER_SIZE);

@@ -81,10 +81,10 @@ void EEPROM_Command_Handler(char *buff)
 		return ;
 	} else if (!strncmp(buff, WRITE, WRITE_LEN)) {
 		EEPROM_Write_Handler(buff + WRITE_LEN + Space_Counter(buff + WRITE_LEN));
+	} else if (!strncmp(buff, READ_BULK, READ_BULK_LEN)) {
+		EEPROM_Read_Bulk_Handler(buff + READ_BULK_LEN + Space_Counter(buff + READ_BULK_LEN));
 	} else if (!strncmp(buff, READ, READ_LEN)) {
 		EEPROM_Read_Handler(buff + READ_LEN + Space_Counter(buff + READ_LEN));
-	} else if (!strncmp(buff, WRITE, READ_BULK_LEN)) {
-		EEPROM_Read_Bulk_Handler(buff + READ_BULK_LEN + Space_Counter(buff + READ_BULK_LEN));
 	} else {
 		printf("eeprom: option not supported\r\n");
 	}

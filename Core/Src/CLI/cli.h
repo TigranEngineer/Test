@@ -4,19 +4,17 @@
 #include "../Utils/utils.h"
 
 // HELP macros
-#define HELP_CLI_LED "led <on/off>\r\n"
+#define HELP_CLI_LED "led <on/off>\t\t\tTurn LED on/off\r\n"
 
-#define HELP_CLI_LED_BLINK "led blink <get/set/reset>\r\n"
+#define HELP_CLI_LED_BLINK "led blink <freq_hz>\t\tSetup LED to blink at specified frequency in HZ\r\n"
 
-#define HELP_CLI_LED_BLINK_SET "led blink set <freq>\r\n"
+#define HELP_CLI_ADC "adc read <adc_id>\t\tShows the digital voltage of the specified ID\r\n"
 
-#define HELP_CLI_ADC "adc read <adc_id>\r\n"
+#define HELP_CLI_EEPROM_WRITE "eeprom write <addr> <val>\tWrites 1 byte data to eeprom's specified address\r\n"
 
-#define HELP_CLI_EEPROM_WRITE "eeprom write <addr> <val>\r\n"
+#define HELP_CLI_EEPROM_READ "eeprom read <addr>\t\tReads 1 byte data from eeprom's specified address\r\n"
 
-#define HELP_CLI_EEPROM_READ "eeprom read <addr>\r\n"
-
-#define HELP_CLI_EEPROM_READ_BULK "eeprom read_bulk <addr> <len>\r\n"
+#define HELP_CLI_EEPROM_READ_BULK "eeprom read_bulk <addr> <len>\tReads specified length byte data starting from eeprom's specified address\r\n"
 
 
 
@@ -43,17 +41,7 @@
 #define LED_BLINK "blink"
 #define LED_BLINK_LEN 5
 
-#define LED_BLINK_SET "set"
-#define LED_BLINK_SET_LEN 3
 #define LED_BLINK_SET_FREQ "led blinking frequency has been set successfully\r\n"
-
-#define LED_BLINK_GET "get"
-#define LED_BLINK_GET_LEN 3
-#define LED_BLINK_FREQ "led blinking frequency is "
-
-#define LED_BLINK_RESET "reset"
-#define LED_BLINK_RESET_LEN 5
-#define LED_BLINK_RESET_FREQ "led blinking frequency has been reset successfully\r\n"
 
 // ADC macros
 #define CLI_ADC "adc"
@@ -69,9 +57,10 @@
 #define READ_BULK "read_bulk"
 #define READ_BULK_LEN 9
 
+#include "../LED/led.h"
 
-void CLI_Input_Char(char ch, led_configs *led_config);
-void Led_Command_Handler(char *buff, led_configs *led_config);
+void CLI_Input_Char(char ch);
+void Led_Command_Handler(char *buff);
 void ADC_Command_Handler(char *buff);
 void EEPROM_Command_Handler(char *buff);
 void Print_Help(char *buff);

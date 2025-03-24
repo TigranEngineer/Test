@@ -10,7 +10,6 @@ void Print_Help(char *buff)
 		char *arr[] = {
 		(HELP_CLI_LED),
 		(HELP_CLI_LED_BLINK),
-		(HELP_CLI_LED_BLINK_SET),
 		(HELP_CLI_ADC),
 		(HELP_CLI_EEPROM_WRITE),
 		(HELP_CLI_EEPROM_READ),

@@ -27,13 +27,13 @@ typedef struct s_led_configs
 
 #include "../Utils/utils.h"
 
-uint32_t Default_Mod(led_configs *led_config);
-void Blink_Led(led_configs *led_config);
-void Led_Turn_On_Off(led_configs *led_config, bool mod);
-void Led_Set_Freq(uint32_t new_freq, led_configs *led_config);
-void Led_Reset_Freq(led_configs *led_config);
-uint32_t Led_Get_Freq(led_configs *led_config);
-bool Led_Is_Freq(char *buff, uint32_t buff_len, const uint32_t *freq_arr);
-
+uint32_t Default_Mod(void);
+void Blink_Led(void);
+void Led_Turn_On_Off(bool mod);
+void Led_Set_Freq(uint32_t new_freq);
+void Led_Reset_Freq(void);
+uint32_t Led_Get_Freq(void);
+bool Led_Is_Freq(char *buff, uint32_t buff_len);
+const uint32_t *Led_Config_Get_Freq_Arr(void);
 
 #endif //LED_H

@@ -1,12 +1,13 @@
 #ifndef UART_H
 # define UART_H
 
-#include "../Led/led.h"
 #include "../CLI/cli.h"
+#include "../LED/led.h"
 
 
-void Echo_UART(led_configs *led_config);
-void Transmit_data(char *data);
+//void Echo_UART(void);
+//void Transmit_data(char *data);
 
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
 
 #endif // UART_H

@@ -4,7 +4,7 @@
 "./Core/Src/CLI/cli_handlers.o"
 "./Core/Src/CLI/cli_input.o"
 "./Core/Src/CLI/cli_led.o"
-"./Core/Src/Led/led.o"
+"./Core/Src/LED/led.o"
 "./Core/Src/SPI/spi.o"
 "./Core/Src/UART/uart.o"
 "./Core/Src/Utils/utils.o"

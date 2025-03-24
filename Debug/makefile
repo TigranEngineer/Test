@@ -14,7 +14,7 @@ RM := rm -rf
 -include Core/Src/Utils/subdir.mk
 -include Core/Src/UART/subdir.mk
 -include Core/Src/SPI/subdir.mk
--include Core/Src/Led/subdir.mk
+-include Core/Src/LED/subdir.mk
 -include Core/Src/CLI/subdir.mk
 -include Core/Src/ADC/subdir.mk
 -include Core/Src/subdir.mk

@@ -24,12 +24,14 @@ void Eeprom_write(uint16_t address, uint16_t data)
 void Eeprom_read(uint16_t address)
 {
     uint8_t rd = 0x3;
-    uint8_t data = 0;
+    uint8_t data[WRITE_SIZE] = {0};
     uint8_t arr[READ_SIZE] = {rd, (address >> 8) & 0xff, (address & 0xff)};
 
 
-    if (HAL_SPI_TransmitReceive(&hspi1, arr, &data, READ_SIZE + 1, 1000) == HAL_OK) {
-    	printf("%d\r\n", data);
+    if (HAL_SPI_TransmitReceive(&hspi1, arr, data, WRITE_SIZE, 1000) == HAL_OK) {
+    	for (uint8_t i = 0; i < WRITE_SIZE; ++i) {
+    		printf("%d\r\n", data[i]);
+    	}
     } else {
     	printf("Error occurred during read process.\r\n");
     }
@@ -42,9 +44,9 @@ void Eeprom_read_bulk(uint16_t address, uint16_t size)
 {
     uint8_t rd = 0x3;
     uint8_t transmit[READ_SIZE] = {rd, (address >> 8) & 0xff, (address & 0xff)};
-    uint8_t receive[size];
+    uint8_t receive[READ_SIZE + size];
 
-    memset(receive, 0, size);
+    memset(receive, 0, READ_SIZE + size);
 
     if (size != 0 && HAL_SPI_TransmitReceive(&hspi1, transmit, receive, READ_SIZE + size, 1000) == HAL_OK) {
         for (uint8_t i = 0; i < size; ++i) {

@@ -12,7 +12,7 @@
 #include <ctype.h>
 #include "../UART/uart.h"
 #include "../CLI/cli.h"
-#include "../Led/led.h"
+#include "../LED/led.h"
 #include "../ADC/adc.h"
 #include "../SPI/spi.h"
 
