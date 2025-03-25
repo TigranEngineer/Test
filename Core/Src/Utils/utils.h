@@ -16,16 +16,6 @@
 #include "../ADC/adc.h"
 #include "../SPI/spi.h"
 
-#ifdef __GNUC__
-
-#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-
-#else
-
-#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-
-#endif
-
 uint8_t Nbrs_Counter(uint32_t nbr);
 char *To_Arr(uint32_t freq);
 uint8_t Get_Sum_Bitwise(void);

@@ -4,6 +4,15 @@
 #include "../CLI/cli.h"
 #include "../LED/led.h"
 
+#ifdef __GNUC__
+
+#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+
+#else
+
+#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+
+#endif
 
 //void Echo_UART(void);
 //void Transmit_data(char *data);

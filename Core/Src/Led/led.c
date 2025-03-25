@@ -23,16 +23,11 @@ static led_configs led_config = {
 // led_config - configurations of led state
 void Blink_Led(void)
 {
-  if (led_config.mod == OFF || led_config.def == 0){
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
-  } else if (led_config.freq == 0 && led_config.def == 1) {
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
-  } else {
-    if (HAL_GetTick() - led_config.timer >= led_config.freq){
-        led_config.timer = HAL_GetTick();
-      HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_11);
+    if (led_config.mod == ON && led_config.def != ON
+    		&& HAL_GetTick() - led_config.timer >= led_config.freq){
+		led_config.timer = HAL_GetTick();
+		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_11);
     }
-  }
 }
 
 // Default_Mod - reset default settings of led depend on hardware
@@ -50,21 +45,21 @@ uint32_t Default_Mod(void)
 }
 
 // Led_Turn_On_Off - turns led on or off depend of received mod
-// led_config - configurations of led state
 // mod - If mod is true - turn on, else - turn off
 void Led_Turn_On_Off(bool mod)
 {
 	if (mod) {
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
 		led_config.def = Get_Sum_Bitwise();
 		led_config.mod = ON;
 	} else {
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
 		led_config.def = OFF;
 		led_config.mod = OFF;
 	}
 }
 
 // Led_Get_Freq - returns led's current frequency
-// led_config - configurations of led state
 uint32_t Led_Get_Freq(void)
 {
 	return (led_config.freq);
@@ -72,7 +67,6 @@ uint32_t Led_Get_Freq(void)
 
 // Led_Set_Freq - sets new frequency for led
 // new_freq - new frequency to set
-// led_config - configurations of led state
 void Led_Set_Freq(uint32_t new_freq)
 {
 	led_config.freq = new_freq;
@@ -80,7 +74,6 @@ void Led_Set_Freq(uint32_t new_freq)
 }
 
 // Led_Reset_Freq - resets frequency of led by default settings
-// led_config - configurations of led state
 void Led_Reset_Freq(void)
 {
 	led_config.freq = Default_Mod();
@@ -89,7 +82,6 @@ void Led_Reset_Freq(void)
 // Led_Reset_Freq - checks and compare received frequencies with available and supported
 // buff - frequency to check
 // buff_len - length of buff
-// freq_arr - available and supported frequencies array
 bool Led_Is_Freq(char *buff, uint32_t buff_len)
 {
 	if (!Is_Nbr(buff, buff_len)) {

@@ -124,12 +124,17 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
-
+  uint8_t ch = 0;
+  printf(CLI_PROMPT);
+  fflush(stdout);
+  HAL_UART_Receive_IT(&huart1, &ch, 1);
   while (1)
   {
-//    Echo_UART();
-    Blink_Led();
+		char c = CLI_Get_Char();
+	  	if (c == '\n' || c == '\b'){
+			CLI_Input_Handler();
+		}
+		Blink_Led();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

@@ -2,20 +2,25 @@
 
 // EEPROM_Read_Bulk_Handler - handles eeprom write command
 // buff - user's input after write and spaces
-static void EEPROM_Write_Handler(char *buff)
+static void EEPROM_Write_Handler(char *token)
 {
-	uint16_t size = strlen(buff) - ENTER_LEN;
+	token = strtok(NULL, DELIMITORS);
 
 	//	if no argument received, informs user about available and supported options
-	if (size == 0) {
+	if (token == 0) {
 		printf(HELP_CLI_EEPROM_WRITE);
 		return ;
 	}
-	uint32_t len_address = Not_Space_Counter(buff);
-	char *tmp = buff + len_address + Space_Counter(buff + len_address);
-	uint32_t len_data = Not_Space_Counter(tmp);
-	if (Is_Nbr(buff, len_address) && Is_Nbr(tmp, len_data) && !strcmp(tmp + len_data + Space_Counter(tmp + len_data), ENTER)) {
-		Eeprom_write(atoi(buff), atoi(tmp));
+	uint32_t len_address = strlen(token);
+	char *next_tok = strtok(NULL, DELIMITORS);
+	if (next_tok == NULL) {
+		printf("eeprom write: required data to write\r\n");
+		printf(HELP_CLI_EEPROM_WRITE);
+	}
+	uint32_t len_data = strlen(next_tok);
+	char *eol = strtok(NULL, DELIMITORS);
+	if (Is_Nbr(token, len_address) && Is_Nbr(next_tok, len_data) && eol == NULL) {
+		Eeprom_write(atoi(token), atoi(next_tok));
 	} else {
 		printf("eeprom write: option or argument not supported\r\n");
 	}
@@ -23,19 +28,19 @@ static void EEPROM_Write_Handler(char *buff)
 
 // EEPROM_Read_Bulk_Handler - handles eeprom read command
 // buff - user's input after read and spaces
-static void EEPROM_Read_Handler(char *buff)
+static void EEPROM_Read_Handler(char *token)
 {
-	uint16_t size = strlen(buff) - ENTER_LEN;
+	token = strtok(NULL, DELIMITORS);
 
 	//	if no argument received, informs user about available and supported options
-	if (size == 0) {
+	if (token == 0) {
 		printf(HELP_CLI_EEPROM_READ);
 		return ;
 	}
-	uint32_t len_address = Not_Space_Counter(buff);
-	char *tmp = buff + len_address + Space_Counter(buff + len_address);
-	if (Is_Nbr(buff, len_address) && !strcmp(tmp, ENTER)) {
-		Eeprom_read(atoi(buff));
+	uint32_t len_address = strlen(token);
+	char *eol = strtok(NULL, DELIMITORS);
+	if (Is_Nbr(token, len_address) && eol == NULL) {
+		Eeprom_read(atoi(token));
 	} else {
 		printf("eeprom read: option or argument not supported\r\n");
 	}
@@ -43,20 +48,25 @@ static void EEPROM_Read_Handler(char *buff)
 
 // EEPROM_Read_Bulk_Handler - handles eeprom read_bulk command
 // buff - user's input after read_bulk and spaces
-static void EEPROM_Read_Bulk_Handler(char *buff)
+static void EEPROM_Read_Bulk_Handler(char *token)
 {
-	uint16_t size = strlen(buff) - ENTER_LEN;
+	token = strtok(NULL, DELIMITORS);
 
 	//	if no argument received, informs user about available and supported options
-	if (size == 0) {
+	if (token == 0) {
 		printf(HELP_CLI_EEPROM_READ_BULK);
 		return ;
 	}
-	uint32_t len_address = Not_Space_Counter(buff);
-	char *tmp = buff + len_address + Space_Counter(buff + len_address);
-	uint32_t len_size = Not_Space_Counter(tmp);
-	if (Is_Nbr(buff, len_address) && Is_Nbr(tmp, len_size) && !strcmp(tmp + len_size + Space_Counter(tmp + len_size), ENTER)) {
-		Eeprom_read_bulk(atoi(buff), atoi(tmp));
+	uint32_t len_address = strlen(token);
+	char *next_tok = strtok(NULL, DELIMITORS);
+	if (next_tok == NULL) {
+		printf("eeprom read_bulk: required length of read\r\n");
+		printf(HELP_CLI_EEPROM_READ_BULK);
+	}
+	uint32_t len_size = strlen(next_tok);
+	char *eol = strtok(NULL, DELIMITORS);
+	if (Is_Nbr(token, len_address) && Is_Nbr(next_tok, len_size) && eol == NULL) {
+		Eeprom_read_bulk(atoi(token), atoi(next_tok));
 	} else {
 		printf("eeprom read_bulk: option or argument not supported\r\n");
 	}
@@ -64,12 +74,12 @@ static void EEPROM_Read_Bulk_Handler(char *buff)
 
 // EEPROM_Command_Handler - handles eeprom commands
 // buff - user's input after eeprom and spaces
-void EEPROM_Command_Handler(char *buff)
+void EEPROM_Command_Handler(char *token)
 {
-	uint16_t size = strlen(buff) - ENTER_LEN;
+	token = strtok(NULL, DELIMITORS);
 
 	//	if no argument received, informs user about available and supported options
-	if (size == 0) {
+	if (token == NULL) {
 		char *arr[] = {
 		(HELP_CLI_EEPROM_WRITE),
 		(HELP_CLI_EEPROM_READ),
@@ -79,12 +89,12 @@ void EEPROM_Command_Handler(char *buff)
 			printf("%s", arr[i]);
 		}
 		return ;
-	} else if (!strncmp(buff, WRITE, WRITE_LEN)) {
-		EEPROM_Write_Handler(buff + WRITE_LEN + Space_Counter(buff + WRITE_LEN));
-	} else if (!strncmp(buff, READ_BULK, READ_BULK_LEN)) {
-		EEPROM_Read_Bulk_Handler(buff + READ_BULK_LEN + Space_Counter(buff + READ_BULK_LEN));
-	} else if (!strncmp(buff, READ, READ_LEN)) {
-		EEPROM_Read_Handler(buff + READ_LEN + Space_Counter(buff + READ_LEN));
+	} else if (!strcmp(token, WRITE)) {
+		EEPROM_Write_Handler(token);
+	} else if (!strcmp(token, READ)) {
+		EEPROM_Read_Handler(token);
+	} else if (!strcmp(token, READ_BULK)) {
+		EEPROM_Read_Bulk_Handler(token);
 	} else {
 		printf("eeprom: option not supported\r\n");
 	}

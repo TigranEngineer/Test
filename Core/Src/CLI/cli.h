@@ -21,45 +21,36 @@
 #define CLI_PROMPT "PCI100$> "
 #define CLI_NOT_SET "command not supported\r\n"
 #define BUFFER_SIZE 8192
-#define ENTER_LEN 2
 #define ENTER "\r\n"
 #define BACKSPACE "\b \b"
 #define HELP "help"
-#define HELP_LEN 4
-
+#define DELIMITORS " \t\n\v\f\r"
 // LED macros
 #define LED "led"
-#define LED_LEN 3
 #define LED_ON "on"
-#define LED_ON_LEN 2
 #define LED_OFF "off"
-#define LED_OFF_LEN 3
 #define LED_TURNED_ON "led turned on\r\n"
 #define LED_TURNED_OFF "led turned off\r\n"
 
 //LED blink macros
 #define LED_BLINK "blink"
-#define LED_BLINK_LEN 5
 
 #define LED_BLINK_SET_FREQ "led blinking frequency has been set successfully\r\n"
 
 // ADC macros
 #define CLI_ADC "adc"
-#define CLI_ADC_LEN 3
 
 //EEPROM macros
 #define EEPROM "eeprom"
-#define EEPROM_LEN 6
 #define WRITE "write"
-#define WRITE_LEN 5
 #define READ "read"
-#define READ_LEN 4
 #define READ_BULK "read_bulk"
-#define READ_BULK_LEN 9
 
 #include "../LED/led.h"
 
+char CLI_Get_Char(void);
 void CLI_Input_Char(char ch);
+void CLI_Input_Handler(void);
 void Led_Command_Handler(char *buff);
 void ADC_Command_Handler(char *buff);
 void EEPROM_Command_Handler(char *buff);

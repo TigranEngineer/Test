@@ -2,11 +2,11 @@
 
 // Print_Help - shows to user available and supported commands
 // buff - user input after help and spaces
-void Print_Help(char *buff)
+void Print_Help(char *token)
 {
-	uint16_t size = strlen(buff) - ENTER_LEN;
+	token = strtok(NULL, DELIMITORS);
 
-	if (size == 0){
+	if (token == NULL){
 		char *arr[] = {
 		(HELP_CLI_LED),
 		(HELP_CLI_LED_BLINK),
