@@ -40,7 +40,8 @@ static void EEPROM_Read_Handler(char *token)
 	uint32_t len_address = strlen(token);
 	char *eol = strtok(NULL, DELIMITORS);
 	if (Is_Nbr(token, len_address) && eol == NULL) {
-		Eeprom_read(atoi(token));
+//		Eeprom_read(atoi(token));
+		Eeprom_read_status_reg();
 	} else {
 		printf("eeprom read: option or argument not supported\r\n");
 	}
