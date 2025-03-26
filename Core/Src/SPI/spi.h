@@ -3,7 +3,7 @@
 
 #include "../Utils/utils.h"
 
-#define READ_SIZE 3
+#define READ_SIZE 4
 #define WRITE_SIZE 4
 
 void Eeprom_write(uint16_t address, uint16_t data);
