@@ -8,21 +8,28 @@ bool ADC_Supported_Channel(uint8_t channel_id)
 {
 	return (channel_id > 0 && channel_id <= sizeof(adc_channels));
 }
-//
-//static void ADC_Channels_Handler(uint8_t channel_id)
-//{
-//
-//
-//	sConfig.Channel = adc_channels[i];
-//	sConfig.Rank = ADC_REGULAR_RANK_1;
-//	sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
-//	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-//	{
-//		Error_Handler();
-//	}
-//	ADC_RANK_NONE
-//	ADC_RANK_CHANNEL_NUMBER
-//}
+
+static void ADC_Error_Handle(void)
+{
+	printf("Something went wrong in channel select process.\r\n");
+	__disable_irq();
+	while (1)
+	{
+	}
+}
+
+static void ADC_Channels_Handler(uint8_t channel_id)
+{
+	ADC_ChannelConfTypeDef sConfig = {0};
+
+	sConfig.Channel = adc_channels[channel_id - 1];
+	sConfig.Rank = ADC_REGULAR_RANK_1;
+	sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+	{
+		ADC_Error_Handle();
+	}
+}
 
 uint8_t ADC_Supported_Channels_Size(void)
 {
@@ -32,7 +39,7 @@ uint8_t ADC_Supported_Channels_Size(void)
 // ADC_Handler - handles received analog, convert to digital and shows voltage
 void ADC_Handler(uint8_t channel_id)
 {
-	(void)channel_id;
+	ADC_Channels_Handler(channel_id);
 	HAL_ADC_Start(&hadc1);
 	uint32_t res = 0;
 	uint16_t i = 0;
