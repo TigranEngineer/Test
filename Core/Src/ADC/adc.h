@@ -6,6 +6,8 @@
 
 #include "../Utils/utils.h"
 
-void ADC_Handler(void);
+bool ADC_Supported_Channel(uint8_t channel_id);
+void ADC_Handler(uint8_t channel_id);
+uint8_t ADC_Supported_Channels_Size(void);
 
 #endif // ADC_H
