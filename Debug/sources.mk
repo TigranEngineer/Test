@@ -24,6 +24,8 @@ C_DEPS :=
 SUBDIRS := \
 Core/Src/ADC \
 Core/Src/CLI \
+Core/Src/Config \
+Core/Src/Init \
 Core/Src/LED \
 Core/Src/SPI \
 Core/Src/UART \

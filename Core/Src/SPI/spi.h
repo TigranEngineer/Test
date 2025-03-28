@@ -1,5 +1,5 @@
-#ifndef SPI
-# define SPI
+#ifndef SPI_H
+# define SPI_H
 
 #include "../Utils/utils.h"
 
@@ -15,4 +15,4 @@ void Eeprom_read(uint16_t address);
 void Eeprom_read_bulk(uint16_t address, uint16_t size);
 void Eeprom_read_status_reg(void);
 
-#endif // SPI
+#endif // SPI_H

@@ -22,6 +22,7 @@ uint8_t Get_Sum_Bitwise(void);
 uint32_t Space_Counter(char *buff);
 uint32_t Not_Space_Counter(char *buff);
 bool Is_Nbr(char *str, uint32_t len);
+void Error_Handler(void);
 
 
 #endif // UTILS_H

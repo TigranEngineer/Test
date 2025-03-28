@@ -35,6 +35,8 @@ extern "C" {
 #include "../Src/SPI/spi.h"
 #include "../Src/ADC/adc.h"
 #include "../Src/LED/led.h"
+#include "../Src/Init/init.h"
+#include "../Src/Config/config.h"
 
 /* USER CODE END Includes */
 
@@ -54,7 +56,6 @@ extern "C" {
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
-void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 

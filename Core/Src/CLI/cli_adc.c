@@ -23,15 +23,16 @@ void ADC_Command_Handler(char *token)
 
 	char *next_token = strtok(NULL, DELIMITORS);
 
-	if (next_token != NULL) {
+	if (next_token == NULL) {
 		Print_NL("adc: option not supported\r\n");
 		Print_NL(HELP_CLI_ADC);
 		ADC_Supported_IDs(ADC_Supported_Channels_Size());
 		return;
 	}
 
-	uint8_t channel_id = atoi(token);
-	if (ADC_Supported_Channel(channel_id)) {
+	uint8_t channel_id = atoi(next_token);
+	char *eol = strtok(NULL, DELIMITORS);
+	if (ADC_Supported_Channel(channel_id) && eol == NULL) {
 		ADC_Handler(channel_id);
 	} else {
 		Print_NL("adc: option not supported\r\n");

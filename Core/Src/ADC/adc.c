@@ -2,7 +2,7 @@
 
 extern ADC_HandleTypeDef hadc1;
 
-static uint32_t adc_channels[] = {ADC_CHANNEL_10};
+static uint32_t adc_channels[1] = {ADC_CHANNEL_10};
 
 bool ADC_Supported_Channel(uint8_t channel_id)
 {
@@ -33,7 +33,7 @@ static void ADC_Channels_Handler(uint8_t channel_id)
 
 uint8_t ADC_Supported_Channels_Size(void)
 {
-	return sizeof(adc_channels);
+	return sizeof(adc_channels) / sizeof(adc_channels[0]);
 }
 
 // ADC_Handler - handles received analog, convert to digital and shows voltage
