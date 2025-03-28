@@ -2,6 +2,12 @@
 
 // Print_Help - shows to user available and supported commands
 // buff - user input after help and spaces
+
+void Print_NL(char *line)
+{
+	printf("%s\r\n", line);
+}
+
 void Print_Help(char *token)
 {
 	token = strtok(NULL, DELIMITORS);
@@ -13,7 +19,8 @@ void Print_Help(char *token)
 		(HELP_CLI_ADC),
 		(HELP_CLI_EEPROM_WRITE),
 		(HELP_CLI_EEPROM_READ),
-		(HELP_CLI_EEPROM_READ_BULK)
+		(HELP_CLI_EEPROM_READ_BULK),
+		(ENTER)
 		};
 		for (uint8_t i = 0; i < sizeof(arr) / sizeof(char *); ++i) {
 			printf("%s", arr[i]);

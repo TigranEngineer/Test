@@ -6,7 +6,7 @@ static uint32_t adc_channels[] = {ADC_CHANNEL_10};
 
 bool ADC_Supported_Channel(uint8_t channel_id)
 {
-	return (channel_id > 0 && channel_id <= sizeof(adc_channels));
+	return (channel_id > 0 && channel_id <= sizeof(adc_channels) / sizeof(adc_channels[0]));
 }
 
 static void ADC_Error_Handle(void)

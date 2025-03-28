@@ -2,7 +2,7 @@
 
 static void ADC_Supported_IDs(uint8_t max_id)
 {
-	printf("Supported channel's IDs are:\r\n");
+	Print_NL("Supported channel's IDs are:\r\n");
 	for (uint8_t i = 1; i <= max_id; ++i){
 		printf(" %d\r\n", i);
 	}
@@ -16,15 +16,16 @@ void ADC_Command_Handler(char *token)
 
 //	if no argument received, informs user about available and supported options
 	if (token == NULL) {
-		printf(HELP_CLI_ADC);
+		Print_NL(HELP_CLI_ADC);
+		ADC_Supported_IDs(ADC_Supported_Channels_Size());
 		return;
 	}
 
 	char *next_token = strtok(NULL, DELIMITORS);
 
 	if (next_token != NULL) {
-		printf("adc: option not supported\r\n");
-		printf(HELP_CLI_ADC);
+		Print_NL("adc: option not supported\r\n");
+		Print_NL(HELP_CLI_ADC);
 		ADC_Supported_IDs(ADC_Supported_Channels_Size());
 		return;
 	}
@@ -33,7 +34,8 @@ void ADC_Command_Handler(char *token)
 	if (ADC_Supported_Channel(channel_id)) {
 		ADC_Handler(channel_id);
 	} else {
-		printf("adc: option not supported\r\n");
-		printf(HELP_CLI_ADC);
+		Print_NL("adc: option not supported\r\n");
+		Print_NL(HELP_CLI_ADC);
+		ADC_Supported_IDs(ADC_Supported_Channels_Size());
 	}
 }

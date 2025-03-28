@@ -40,9 +40,13 @@ void CLI_Input_Handler(void) {
 	if (buff[iter - 1] == '\b') {
 		if (--iter != 0) {
 			buff[iter] = 0;
-			buff[--iter] = 0;
-			printf(BACKSPACE);
+			if (buff[--iter] == '\t') {
+				printf(BACKSPACE_AFTER_TAB);
+			} else {
+				printf(BACKSPACE);
+			}
 			fflush(stdout);
+			buff[iter] = 0;
 		}
 		return;
 	}
@@ -63,10 +67,10 @@ char CLI_Get_Char(void) {
 // ch - character to store in buffer
 void CLI_Input_Char(char ch)
 {
+	buff[iter++] = ch;
+	buff[iter] = 0;
+
 	if (iter == BUFFER_SIZE) {
 		iter = 0;
 	}
-
-	buff[iter++] = ch;
-	buff[iter] = 0;
 }

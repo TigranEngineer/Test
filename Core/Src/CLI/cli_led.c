@@ -5,7 +5,7 @@
 // size - size of frequencies array
 static void Led_Supported_Freqs(const uint32_t *freq_arr)
 {
-	printf("Supported frequencies are:\r\n");
+	Print_NL("Supported frequencies are:\r\n");
 	for (uint8_t i = 2; i < GPIO_PIN_COUNT + 1; ++i){
 		printf(" %ldHz\r\n", freq_arr[i]);
 	}
@@ -18,7 +18,7 @@ static void _Led_Blink_Command_Handler(char *token)
 {
 	//	if no argument received, informs user about available and supported options
 	if (token == NULL) {
-		printf(HELP_CLI_LED_BLINK);
+		Print_NL(HELP_CLI_LED_BLINK);
 		Led_Supported_Freqs(Led_Config_Get_Freq_Arr());
 		return;
 	}
@@ -29,7 +29,7 @@ static void _Led_Blink_Command_Handler(char *token)
 		Led_Set_Freq(atoi(token));
 		printf(LED_BLINK_SET_FREQ);
 	} else {
-		printf("Given frequency not supported\r\n");
+		Print_NL("Given frequency not supported\r\n");
 		Led_Supported_Freqs(Led_Config_Get_Freq_Arr());
 	}
 }
@@ -46,6 +46,7 @@ void Led_Command_Handler(char *token)
 		char *arr[] = {
 		(HELP_CLI_LED),
 		(HELP_CLI_LED_BLINK),
+		(ENTER)
 		};
 		for (uint8_t i = 0; i < sizeof(arr) / sizeof(char *); ++i) {
 			printf( "%s", arr[i]);
@@ -53,13 +54,13 @@ void Led_Command_Handler(char *token)
 		Led_Supported_Freqs(Led_Config_Get_Freq_Arr());
 	} else if (!strcmp(token, LED_ON) && next_tok == NULL) {
 		Led_Turn_On_Off(true);
-		printf(LED_TURNED_ON);
+		Print_NL(LED_TURNED_ON);
 	} else if (!strcmp(token, LED_OFF) && next_tok == NULL) {
 		Led_Turn_On_Off(false);
-		printf(LED_TURNED_OFF);
+		Print_NL(LED_TURNED_OFF);
 	} else if (!strcmp(token, LED_BLINK)) {
 		_Led_Blink_Command_Handler(next_tok);
 	} else {
-		printf("led: option not supported\r\n");
+		Print_NL("led: option not supported\r\n");
 	}
 }

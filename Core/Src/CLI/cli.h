@@ -23,6 +23,7 @@
 #define BUFFER_SIZE 8192
 #define ENTER "\r\n"
 #define BACKSPACE "\b \b"
+#define BACKSPACE_AFTER_TAB "\b\b\b\b\b\b\b \b"
 #define HELP "help"
 #define DELIMITORS " \t\n\v\f\r"
 // LED macros
@@ -48,6 +49,7 @@
 
 #include "../LED/led.h"
 
+void Print_NL(char *line);
 char CLI_Get_Char(void);
 void CLI_Input_Char(char ch);
 void CLI_Input_Handler(void);
