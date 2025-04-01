@@ -55,7 +55,7 @@ void CLI_Input_Handler(void) {
 		Command_Handler(buff);
 		printf(CLI_PROMPT);
 		fflush(stdout);
-		memset(buff, 0, iter);
+//		memset(buff, 0, iter);
 		iter = 0;
 	}
 }

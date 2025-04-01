@@ -107,7 +107,7 @@ int main(void)
   printf(CLI_PROMPT);
   fflush(stdout);
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
-  HAL_UART_Receive_IT(&huart1, &ch, 1);
+  HAL_UART_Receive_DMA(&huart1, &ch, 1);
   while (1)
   {
 		char c = CLI_Get_Char();
