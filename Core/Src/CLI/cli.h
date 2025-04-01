@@ -21,7 +21,7 @@
 #define CLI_PROMPT "PCI100$> "
 #define CLI_NOT_SET "command not supported\r\n"
 #define BUFFER_SIZE 8192
-#define ENTER "\r\n"
+#define ENTER "\n"
 #define BACKSPACE "\b \b"
 #define BACKSPACE_AFTER_TAB "\b\b\b\b\b\b\b \b"
 #define HELP "help"

@@ -61,7 +61,7 @@ static void MX_DMA_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+extern uint8_t rxBuffer[UART_BUFFER_SIZE];
 /* USER CODE END 0 */
 
 /**
@@ -107,16 +107,14 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint8_t ch = 0;
-  printf(ENTER);
-  printf(CLI_PROMPT);
+  printf("\r\n%s", CLI_PROMPT);
   fflush(stdout);
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
-  HAL_UART_Receive_DMA(&huart1, &ch, 1);
+  HAL_UART_Receive_DMA(&huart1, &rxBuffer[0], 1);
   while (1)
   {
 		char c = CLI_Get_Char();
-	  	if (c == '\n' || c == '\b'){
+	  	if (c == '\r' || c == '\b'){
 			CLI_Input_Handler();
 		}
 		Blink_Led();

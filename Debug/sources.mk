@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (13.3.rel1)
+# Toolchain: GNU Tools for STM32 (12.3.rel1)
 ################################################################################
 
 ELF_SRCS := 
@@ -26,7 +26,7 @@ Core/Src/ADC \
 Core/Src/CLI \
 Core/Src/Config \
 Core/Src/Init \
-Core/Src/Led \
+Core/Src/LED \
 Core/Src/SPI \
 Core/Src/UART \
 Core/Src/Utils \

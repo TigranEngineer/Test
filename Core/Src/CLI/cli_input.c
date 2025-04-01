@@ -51,7 +51,10 @@ void CLI_Input_Handler(void) {
 		return;
 	}
 
-	if (buff[iter - 1] == '\n'){
+	if (buff[iter - 1] == '\r'){
+		buff[iter] = '\n';
+		buff[iter + 1] = 0;
+		printf("\r\n");
 		Command_Handler(buff);
 		printf(CLI_PROMPT);
 		fflush(stdout);

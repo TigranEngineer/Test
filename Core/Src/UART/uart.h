@@ -4,6 +4,9 @@
 #include "../CLI/cli.h"
 #include "../LED/led.h"
 
+#define UART_BUFFER_SIZE 64
+
+
 #ifdef __GNUC__
 
 #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
