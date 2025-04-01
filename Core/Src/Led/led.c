@@ -23,7 +23,7 @@ static led_configs led_config = {
 // led_config - configurations of led state
 void Blink_Led(void)
 {
-    if (led_config.mod == ON && led_config.def != ON
+    if (led_config.mod == ON && led_config.freq != 0
     		&& HAL_GetTick() - led_config.timer >= led_config.freq){
 		led_config.timer = HAL_GetTick();
 		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_11);
