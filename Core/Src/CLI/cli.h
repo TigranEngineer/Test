@@ -51,7 +51,8 @@
 
 void Print_NL(char *line);
 char CLI_Get_Char(void);
-void CLI_Input_Char(char ch);
+void CLI_Set_Char(char ch);
+void CLI_Pop_Char(void);
 void CLI_Input_Handler(void);
 void Led_Command_Handler(char *buff);
 void ADC_Command_Handler(char *buff);

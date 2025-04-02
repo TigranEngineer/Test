@@ -110,13 +110,11 @@ int main(void)
   printf("\r\n%s", CLI_PROMPT);
   fflush(stdout);
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
-  HAL_UART_Receive_DMA(&huart1, &rxBuffer[0], 1);
+  HAL_UART_Receive_DMA(&huart1, rxBuffer, 1);
   while (1)
   {
-		char c = CLI_Get_Char();
-	  	if (c == '\r' || c == '\b'){
-			CLI_Input_Handler();
-		}
+
+		UART_To_CLI_Handler();
 		Blink_Led();
 
 

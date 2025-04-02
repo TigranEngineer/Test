@@ -2,10 +2,8 @@
 # define UART_H
 
 #include "../CLI/cli.h"
-#include "../LED/led.h"
 
 #define UART_BUFFER_SIZE 64
-
 
 #ifdef __GNUC__
 
@@ -17,9 +15,8 @@
 
 #endif
 
-//void Echo_UART(void);
-//void Transmit_data(char *data);
-
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
+void UART_To_CLI_Handler(void);
+void UART_Set_Char(char ch);
 
 #endif // UART_H

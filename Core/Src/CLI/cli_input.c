@@ -1,9 +1,10 @@
 #include "cli.h"
 
 
+extern UART_HandleTypeDef huart1;
+
 static char buff[BUFFER_SIZE] = {0};
 static uint16_t iter = 0;
-
 
 // Command_Handler - Handles user input line
 // line - user's input line to handle
@@ -37,30 +38,12 @@ static void Command_Handler(char *line)
 
 // CLI_Input_Char - Handles storage process
 void CLI_Input_Handler(void) {
-	if (buff[iter - 1] == '\b') {
-		if (--iter != 0) {
-			buff[iter] = 0;
-			if (buff[--iter] == '\t') {
-				printf(BACKSPACE_AFTER_TAB);
-			} else {
-				printf(BACKSPACE);
-			}
-			fflush(stdout);
-			buff[iter] = 0;
-		}
-		return;
-	}
-
-	if (buff[iter - 1] == '\r'){
-		buff[iter] = '\n';
-		buff[iter + 1] = 0;
-		printf("\r\n");
 		Command_Handler(buff);
 		printf(CLI_PROMPT);
 		fflush(stdout);
 //		memset(buff, 0, iter);
 		iter = 0;
-	}
+		buff[iter] = 0;
 }
 
 char CLI_Get_Char(void) {
@@ -68,12 +51,23 @@ char CLI_Get_Char(void) {
 }
 
 // ch - character to store in buffer
-void CLI_Input_Char(char ch)
+void CLI_Set_Char(char ch)
 {
-	buff[iter++] = ch;
+	buff[iter] = ch;
+	iter = (iter + 1) % BUFFER_SIZE;
 	buff[iter] = 0;
+}
 
-	if (iter == BUFFER_SIZE) {
-		iter = 0;
+void CLI_Pop_Char(void) {
+	if (iter == 0) {
+		return ;
 	}
+
+	if (buff[--iter] == '\t') {
+		printf(BACKSPACE_AFTER_TAB);
+	} else {
+		printf(BACKSPACE);
+	}
+	fflush(stdout);
+	buff[iter] = 0;
 }
