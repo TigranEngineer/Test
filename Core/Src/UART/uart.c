@@ -11,18 +11,25 @@ PUTCHAR_PROTOTYPE
 	return ch;
 }
 
-uint8_t rxBuffer[UART_BUFFER_SIZE];
-volatile uint8_t rxIndex = 0;
+uint8_t ch;
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	UART_Set_Char(rxBuffer[rxIndex]);
-	rxIndex = (rxIndex + 1) % UART_BUFFER_SIZE;
-	HAL_UART_Receive_DMA(&huart1, &rxBuffer[rxIndex], 1);
+	if (huart->Instance == USART1) {
+
+		UART_Set_Char(ch);
+		HAL_UART_Receive_DMA(huart, &ch, 1);
+	}
 }
 
-char uartBuffer[BUFFER_SIZE] = {0};
-uint16_t uartIndex = 0;
+
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart) {
+
+	HAL_UART_RxCpltCallback(huart);
+}
+
+static char uartBuffer[BUFFER_SIZE] = {0};
+static uint16_t uartIndex = 0;
 
 void UART_Set_Char(char ch)
 {
@@ -33,20 +40,20 @@ void UART_Set_Char(char ch)
 
 void UART_To_CLI_Handler(void)
 {
-	static uint16_t pos;
+	static uint16_t bufferPos;
 
-	while (uartBuffer[pos] != 0) {
-		if (uartBuffer[pos] == '\r') {
-			CLI_Set_Char(uartBuffer[pos]);
+	while (uartBuffer[bufferPos] != 0) {
+		if (uartBuffer[bufferPos] == '\r') {
+			CLI_Set_Char(uartBuffer[bufferPos]);
 			CLI_Set_Char('\n');
 			printf("\r\n");
 			CLI_Input_Handler();
-		} else if (isprint(uartBuffer[pos]) || isspace(uartBuffer[pos])) {
-			HAL_UART_Transmit(&huart1, (uint8_t *)&uartBuffer[pos], 1, 1000);
-			CLI_Set_Char(uartBuffer[pos]);
-		} else if (uartBuffer[pos] == '\b') {
+		} else if (isprint(uartBuffer[bufferPos]) || isspace(uartBuffer[bufferPos])) {
+			HAL_UART_Transmit(&huart1, (uint8_t *)&uartBuffer[bufferPos], 1, 1000);
+			CLI_Set_Char(uartBuffer[bufferPos]);
+		} else if (uartBuffer[bufferPos] == '\b') {
 			CLI_Pop_Char();
 		}
-		pos = (pos + 1) % BUFFER_SIZE;
+		bufferPos = (bufferPos + 1) % BUFFER_SIZE;
 	}
 }
