@@ -15,11 +15,9 @@ uint8_t ch;
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	if (huart->Instance == USART1) {
-
+//	if (huart->Instance == USART1) {
 		UART_Set_Char(ch);
-		HAL_UART_Receive_DMA(huart, &ch, 1);
-	}
+//	}
 }
 
 
@@ -31,9 +29,9 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart) {
 static char uartBuffer[BUFFER_SIZE] = {0};
 static uint16_t uartIndex = 0;
 
-void UART_Set_Char(char ch)
+void UART_Set_Char(char c)
 {
-	uartBuffer[uartIndex] = ch;
+	uartBuffer[uartIndex] = c;
 	uartIndex = (uartIndex + 1) % BUFFER_SIZE;
 	uartBuffer[uartIndex] = 0;
 }

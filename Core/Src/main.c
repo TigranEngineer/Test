@@ -103,6 +103,7 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
+  HAL_UART_Receive_DMA(&huart1, &ch, 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -110,7 +111,6 @@ int main(void)
   printf("\r\n%s", CLI_PROMPT);
   fflush(stdout);
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
-  HAL_UART_Receive_DMA(&huart1, &ch, 1);
   while (1)
   {
 
