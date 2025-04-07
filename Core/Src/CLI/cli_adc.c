@@ -1,12 +1,6 @@
 #include "cli.h"
 
-static void ADC_Supported_IDs(uint8_t max_id)
-{
-	Print_NL("Supported channel's IDs are:\r\n");
-	for (uint8_t i = 1; i <= max_id; ++i){
-		printf(" %d\r\n", i);
-	}
-}
+
 
 // ADC_Command_Handler - handles adc commands
 // buff - user's input after adc and spaces
